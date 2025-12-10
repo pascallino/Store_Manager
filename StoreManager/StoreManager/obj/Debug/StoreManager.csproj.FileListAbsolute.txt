@@ -1,0 +1,16 @@
+c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.exe.config
+c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.exe
+c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.pdb
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csprojAssemblyReference.cache
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.Properties.Resources.resources
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csproj.GenerateResource.cache
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csproj.CoreCompileInputs.cache
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.exe
+c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.pdb
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmSplashscreen.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmmain.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmItems.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmRestockItems.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmAuthorize.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmAdjustQuanity.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmSales.resources
