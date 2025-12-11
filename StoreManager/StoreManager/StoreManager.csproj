@@ -96,6 +96,8 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RawPrinterHelper.cs" />
+    <Compile Include="ReceiptItem.cs" />
     <EmbeddedResource Include="frmAdjustQuanity.resx">
       <DependentUpon>frmAdjustQuanity.cs</DependentUpon>
     </EmbeddedResource>

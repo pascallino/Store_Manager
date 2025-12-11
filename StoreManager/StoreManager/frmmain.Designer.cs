@@ -118,7 +118,7 @@
             // menuSellItem
             // 
             this.menuSellItem.Name = "menuSellItem";
-            this.menuSellItem.Size = new System.Drawing.Size(216, 26);
+            this.menuSellItem.Size = new System.Drawing.Size(142, 26);
             this.menuSellItem.Text = "Sell Item";
             this.menuSellItem.Click += new System.EventHandler(this.menuSellItem_Click);
             // 
@@ -162,6 +162,7 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
