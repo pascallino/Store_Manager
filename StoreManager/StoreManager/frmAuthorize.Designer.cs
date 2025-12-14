@@ -34,6 +34,7 @@
             this.label11 = new System.Windows.Forms.Label();
             this.btnAuthorize = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,7 +76,7 @@
             this.btnAuthorize.Location = new System.Drawing.Point(640, 86);
             this.btnAuthorize.Name = "btnAuthorize";
             this.btnAuthorize.Size = new System.Drawing.Size(87, 39);
-            this.btnAuthorize.TabIndex = 12;
+            this.btnAuthorize.TabIndex = 0;
             this.btnAuthorize.Text = "Open";
             this.btnAuthorize.UseVisualStyleBackColor = false;
             this.btnAuthorize.Click += new System.EventHandler(this.btnAuthorize_Click);
@@ -90,11 +91,24 @@
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.ForeColor = System.Drawing.SystemColors.AppWorkspace;
+            this.label2.Location = new System.Drawing.Point(579, 35);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(211, 26);
+            this.label2.TabIndex = 13;
+            this.label2.Text = "Authorize Quantity";
+            this.label2.Visible = false;
+            // 
             // frmAuthorize
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 163);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.btnAuthorize);
             this.Controls.Add(this.txtpassword);
             this.Controls.Add(this.label11);
@@ -106,6 +120,7 @@
             this.Name = "frmAuthorize";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "frmAuthorize";
+            this.Load += new System.EventHandler(this.frmAuthorize_Load);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -119,5 +134,6 @@
         private System.Windows.Forms.TextBox txtpassword;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Button btnAuthorize;
+        private System.Windows.Forms.Label label2;
     }
 }

@@ -70,15 +70,45 @@ namespace StoreManager
 
         private void menuAdminAdjustItem_Click(object sender, EventArgs e)
         {
-            frmAuthorize authorize = new frmAuthorize();
+            frmAuthorize authorize = new frmAuthorize("adjust");
             authorize.ShowDialog();
         }
 
         private void menuSellItem_Click(object sender, EventArgs e)
         {
             frmSales sale = new frmSales();
-            sale.ShowDialog();
+            sale.Show();
                
+        }
+
+        private void menuLowInStock_Click(object sender, EventArgs e)
+        {
+            frmLowInStock low = new frmLowInStock();
+            low.ShowDialog();
+        }
+
+        private void menuSearchSales_Click(object sender, EventArgs e)
+        {
+            frmQuerySale q = new frmQuerySale();
+            q.ShowDialog();
+        }
+
+        private void menuAudit_Click(object sender, EventArgs e)
+        {
+            frmAuthorize a = new frmAuthorize("Audit");
+            a.ShowDialog();
+        }
+
+        private void menuPurchaseRrcords_Click(object sender, EventArgs e)
+        {
+            frmQueryPurchase p = new frmQueryPurchase();
+            p.ShowDialog();
+        }
+
+        private void menuSoldItems_Click(object sender, EventArgs e)
+        {
+            frmQuerySalesItems s = new frmQuerySalesItems();
+            s.ShowDialog();
         }
     }
 }

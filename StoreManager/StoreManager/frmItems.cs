@@ -122,7 +122,7 @@ namespace StoreManager
                 dtItems.DefaultView.RowFilter = "";
                 dgvItems.DataSource = dtItems;
                 // Show total records
-                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count + 1}";
+                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count}";
             }
         }
         private void LoadItemDetails()
@@ -391,67 +391,92 @@ namespace StoreManager
             using (SqlConnection con = DB.GetCon())
             {
                 con.Open();
+                SqlTransaction tran = con.BeginTransaction();
 
-                SqlCommand cmd;
-
-                if (string.IsNullOrWhiteSpace(txtItemID.Text))
+                try
                 {
-                    // INSERT
-                    string insertQuery = @"
-                INSERT INTO Items 
-                (Barcode, ItemName, Carton_Quantity, Quantity, Per_Carton_Quantity, Total_Quantity, 
-                 Carton_CP, Carton_SP, Quantity_CP, Quantity_SP, Created_at)
-                VALUES
-                (@Barcode, @ItemName, @CartonQty, @Qty, @PerCartonQty, @TotalQty,
-                 @CartonCP, @CartonSP, @QtyCP, @QtySP, GETDATE())";
+                    if (string.IsNullOrWhiteSpace(txtItemID.Text))
+                    {
+                        // 🔹 1. INSERT ITEM
+                        SqlCommand cmdItem = new SqlCommand(@"
+                    INSERT INTO Items 
+                    (Barcode, ItemName, Carton_Quantity, Quantity, Per_Carton_Quantity, Total_Quantity,
+                     Carton_CP, Carton_SP, Quantity_CP, Quantity_SP, Created_at)
+                    VALUES
+                    (@Barcode, @ItemName, @CartonQty, @Qty, @PerCartonQty, @TotalQty,
+                     @CartonCP, @CartonSP, @QtyCP, @QtySP, GETDATE());
 
-                    cmd = new SqlCommand(insertQuery, con);
+                    SELECT SCOPE_IDENTITY();
+                ", con, tran);
+
+                        cmdItem.Parameters.AddWithValue("@Barcode", txtBarcode.Text);
+                        cmdItem.Parameters.AddWithValue("@ItemName", txtItemName.Text);
+                        cmdItem.Parameters.AddWithValue("@CartonQty", cartonQty);
+                        cmdItem.Parameters.AddWithValue("@Qty", qty);
+                        cmdItem.Parameters.AddWithValue("@PerCartonQty", perCartonQty);
+                        cmdItem.Parameters.AddWithValue("@TotalQty", totalQty);
+                        cmdItem.Parameters.AddWithValue("@CartonCP", txtCartonCP.Text);
+                        cmdItem.Parameters.AddWithValue("@CartonSP", txtCartonSP.Text);
+                        cmdItem.Parameters.AddWithValue("@QtyCP", txtQtyCP.Text);
+                        cmdItem.Parameters.AddWithValue("@QtySP", txtQtySP.Text);
+
+                        int newItemID = Convert.ToInt32(cmdItem.ExecuteScalar());
+
+                        // 🔹 2. LOG INITIAL ENTRY INTO PURCHASED ITEMS
+                        SqlCommand cmdLedger = new SqlCommand(@"
+                    INSERT INTO PurchasedItems
+                    (ItemID, Cr, Dr, Purchase_Status, Created_At)
+                    VALUES
+                    (@ItemID, @Cr, 0, 'INITIAL_ENTRY', GETDATE())
+                ", con, tran);
+
+                        cmdLedger.Parameters.AddWithValue("@ItemID", newItemID);
+                        cmdLedger.Parameters.AddWithValue("@Cr", totalQty);
+                        cmdLedger.ExecuteNonQuery();
+
+                        tran.Commit();
+
+                        MessageBox.Show("Item saved successfully with initial stock entry!");
+                    }
+                    else
+                    {
+                        // 🔹 UPDATE ITEM DETAILS ONLY (NO STOCK MOVEMENT)
+                        SqlCommand cmdUpdate = new SqlCommand(@"
+                    UPDATE Items
+                    SET Barcode = @Barcode,
+                        ItemName = @ItemName,
+                        Per_Carton_Quantity = @PerCartonQty,
+                        Carton_CP = @CartonCP,
+                        Carton_SP = @CartonSP,
+                        Quantity_CP = @QtyCP,
+                        Quantity_SP = @QtySP,
+                        Updated_at = GETDATE()
+                    WHERE ItemID = @ID
+                ", con, tran);
+
+                        cmdUpdate.Parameters.AddWithValue("@ID", txtItemID.Text);
+                        cmdUpdate.Parameters.AddWithValue("@Barcode", txtBarcode.Text);
+                        cmdUpdate.Parameters.AddWithValue("@ItemName", txtItemName.Text);
+                        cmdUpdate.Parameters.AddWithValue("@PerCartonQty", perCartonQty);
+                        cmdUpdate.Parameters.AddWithValue("@CartonCP", txtCartonCP.Text);
+                        cmdUpdate.Parameters.AddWithValue("@CartonSP", txtCartonSP.Text);
+                        cmdUpdate.Parameters.AddWithValue("@QtyCP", txtQtyCP.Text);
+                        cmdUpdate.Parameters.AddWithValue("@QtySP", txtQtySP.Text);
+
+                        cmdUpdate.ExecuteNonQuery();
+                        tran.Commit();
+
+                        MessageBox.Show("Item updated successfully!");
+                    }
+
+                    LoadItems();
+                    ClearItemFields();
                 }
-                else
+                catch (Exception ex)
                 {
-
-                    // UPDATE
-                    string updateQuery = @"
-                UPDATE Items
-                SET Barcode = @Barcode,
-                    ItemName = @ItemName,
-                    Carton_Quantity = @CartonQty,
-                    Quantity = @Qty,
-                    Per_Carton_Quantity = @PerCartonQty,
-                    Total_Quantity = @TotalQty,
-                    Carton_CP = @CartonCP,
-                    Carton_SP = @CartonSP,
-                    Quantity_CP = @QtyCP,
-                    Quantity_SP = @QtySP,
-                    Updated_at = GETDATE()
-                WHERE ItemID = @ID";
-
-                    cmd = new SqlCommand(updateQuery, con);
-                    cmd.Parameters.AddWithValue("@ID", txtItemID.Text);
+                    tran.Rollback();
+                    MessageBox.Show("Error: " + ex.Message);
                 }
-
-                // Common parameters
-                cmd.Parameters.AddWithValue("@Barcode", txtBarcode.Text);
-                cmd.Parameters.AddWithValue("@ItemName", txtItemName.Text);
-                cmd.Parameters.AddWithValue("@CartonQty", cartonQty);
-                cmd.Parameters.AddWithValue("@Qty", qty);
-                cmd.Parameters.AddWithValue("@PerCartonQty", perCartonQty);
-                cmd.Parameters.AddWithValue("@TotalQty", totalQty);
-                cmd.Parameters.AddWithValue("@CartonCP", txtCartonCP.Text);
-                cmd.Parameters.AddWithValue("@CartonSP", txtCartonSP.Text);
-                cmd.Parameters.AddWithValue("@QtyCP", txtQtyCP.Text);
-                cmd.Parameters.AddWithValue("@QtySP", txtQtySP.Text);
-
-                cmd.ExecuteNonQuery();
-
-                if (string.IsNullOrWhiteSpace(txtItemID.Text))
-                    MessageBox.Show("Item saved successfully!");
-                else
-                    MessageBox.Show("Item updated successfully!");
-
-                 LoadItems();
-                //  LoadItemsPage();
-                ClearItemFields();  // Clear textboxes after operation
             }
         }
 

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRestockItems));
             this.label12 = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
@@ -40,6 +40,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lbltotal = new System.Windows.Forms.Label();
             this.lbltotalinfo = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
@@ -56,7 +57,6 @@
             this.txtItemName = new System.Windows.Forms.TextBox();
             this.label11 = new System.Windows.Forms.Label();
             this.txtItemID = new System.Windows.Forms.Label();
-            this.lbltotal = new System.Windows.Forms.Label();
             this.lblPerCartonQty = new System.Windows.Forms.Label();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvRItems)).BeginInit();
@@ -101,9 +101,9 @@
             // 
             this.dgvRItems.AllowUserToAddRows = false;
             this.dgvRItems.AllowUserToResizeRows = false;
-            dataGridViewCellStyle8.BackColor = System.Drawing.Color.Gainsboro;
-            dataGridViewCellStyle8.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dgvRItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle8;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.Gainsboro;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Times New Roman", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dgvRItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvRItems.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
@@ -195,6 +195,16 @@
             this.panel2.Size = new System.Drawing.Size(575, 620);
             this.panel2.TabIndex = 18;
             // 
+            // lbltotal
+            // 
+            this.lbltotal.AutoSize = true;
+            this.lbltotal.Location = new System.Drawing.Point(32, 0);
+            this.lbltotal.Name = "lbltotal";
+            this.lbltotal.Size = new System.Drawing.Size(46, 17);
+            this.lbltotal.TabIndex = 24;
+            this.lbltotal.Text = "label3";
+            this.lbltotal.Visible = false;
+            // 
             // lbltotalinfo
             // 
             this.lbltotalinfo.AutoSize = true;
@@ -231,9 +241,9 @@
             this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel5.Controls.Add(this.button1);
             this.panel5.Controls.Add(this.btnSave);
-            this.panel5.Location = new System.Drawing.Point(113, 331);
+            this.panel5.Location = new System.Drawing.Point(50, 331);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(441, 59);
+            this.panel5.Size = new System.Drawing.Size(504, 119);
             this.panel5.TabIndex = 8;
             // 
             // button1
@@ -241,11 +251,11 @@
             this.button1.BackColor = System.Drawing.Color.Firebrick;
             this.button1.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.AliceBlue;
-            this.button1.Location = new System.Drawing.Point(238, 12);
+            this.button1.Location = new System.Drawing.Point(238, 39);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(82, 32);
+            this.button1.Size = new System.Drawing.Size(171, 47);
             this.button1.TabIndex = 12;
-            this.button1.Text = "Clear";
+            this.button1.Text = "CLEAR";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
@@ -254,11 +264,11 @@
             this.btnSave.BackColor = System.Drawing.Color.SeaGreen;
             this.btnSave.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSave.ForeColor = System.Drawing.Color.AliceBlue;
-            this.btnSave.Location = new System.Drawing.Point(118, 12);
+            this.btnSave.Location = new System.Drawing.Point(47, 39);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(114, 32);
+            this.btnSave.Size = new System.Drawing.Size(185, 47);
             this.btnSave.TabIndex = 11;
-            this.btnSave.Text = "Add Item";
+            this.btnSave.Text = "ADD ITEM";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
@@ -356,16 +366,6 @@
             this.txtItemID.Size = new System.Drawing.Size(0, 17);
             this.txtItemID.TabIndex = 19;
             this.txtItemID.Visible = false;
-            // 
-            // lbltotal
-            // 
-            this.lbltotal.AutoSize = true;
-            this.lbltotal.Location = new System.Drawing.Point(32, 0);
-            this.lbltotal.Name = "lbltotal";
-            this.lbltotal.Size = new System.Drawing.Size(46, 17);
-            this.lbltotal.TabIndex = 24;
-            this.lbltotal.Text = "label3";
-            this.lbltotal.Visible = false;
             // 
             // lblPerCartonQty
             // 

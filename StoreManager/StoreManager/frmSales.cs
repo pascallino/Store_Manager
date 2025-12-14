@@ -28,11 +28,9 @@ namespace StoreManager
             dgvCart.CellClick += dgvCart_CellClick;
             txtCashReceived.TextChanged += txtCashReceived_TextChanged;
             btnDeleteTransaction.Click += btnDeleteTransaction_Click;
-
-
-
-
-
+            lstSuggestions.Click += lstSuggestions_Click;
+            dgvCart.Leave += dgvCart_Leave;
+            dgvCart.MouseLeave += dgvCart_MouseLeave;
 
 
 
@@ -289,11 +287,36 @@ namespace StoreManager
             }
         }
 
-       
+        private int GetItemStock(string itemId)
+        {
+            using (SqlConnection con = DB.GetCon())
+            {
+                con.Open();
+                string query = "SELECT Total_Quantity FROM Items WHERE ItemID = @id";
+
+                SqlCommand cmd = new SqlCommand(query, con);
+                cmd.Parameters.AddWithValue("@id", itemId);
+
+                object result = cmd.ExecuteScalar();
+
+                if (result != null && result != DBNull.Value)
+                    return Convert.ToInt32(result);
+                else
+                    return 0;
+            }
+        }
+
 
         // ---------- Add item to cart (merge if exists) ----------
         private void AddItemToCart(string itemId, string name, string barcode, decimal unitPrice, int perCarton, decimal cartonPrice)
         {
+            // 1️⃣ Check item exists and has stock
+            int totalQty = GetItemStock(itemId);
+            if (totalQty <= 0)
+            {
+                MessageBox.Show($"{name} is OUT OF STOCK!", "Stock Alert", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             // check if item already exists in the cart
             foreach (DataGridViewRow row in dgvCart.Rows)
             {
@@ -383,6 +406,18 @@ namespace StoreManager
             // needed so combo changes commit immediately
             if (dgvCart.IsCurrentCellDirty)
                 dgvCart.CommitEdit(DataGridViewDataErrorContexts.Commit);
+           
+        }
+        private void dgvCart_MouseLeave(object sender, EventArgs e)
+        {
+            if (dgvCart.IsCurrentCellDirty)
+            {
+                dgvCart.EndEdit(); // Forces commit
+            }
+        }
+        private void dgvCart_Leave(object sender, EventArgs e)
+        {
+            dgvCart.EndEdit();
         }
 
         private void dgvCart_CellValueChanged(object sender, DataGridViewCellEventArgs e)
@@ -391,36 +426,58 @@ namespace StoreManager
 
             string colName = dgvCart.Columns[e.ColumnIndex].Name;
 
-            if (colName == "CartonQty" || colName == "UnitQty")
+            if (colName != "CartonQty" && colName != "UnitQty")
+                return;
+
+            DataGridViewRow row = dgvCart.Rows[e.RowIndex];
+
+            string itemId = row.Cells["ItemID"].Value?.ToString();
+            if (string.IsNullOrEmpty(itemId)) return;
+
+            // Get per-carton quantity for calculations
+            int perCarton = int.Parse(row.Cells["PerCarton"].Value?.ToString() ?? "1");
+
+            // --- Ensure quantities are valid integers ---
+            int cartons = int.TryParse(row.Cells["CartonQty"].Value?.ToString(), out int c) ? c : 0;
+            int units = int.TryParse(row.Cells["UnitQty"].Value?.ToString(), out int u) ? u : 0;
+
+            if (cartons < 0) cartons = 0;
+            if (units < 0) units = 0;
+
+            // Put sanitized values back into the grid
+            row.Cells["CartonQty"].Value = cartons.ToString();
+            row.Cells["UnitQty"].Value = units.ToString();
+
+            // --- Compute total qty requested by customer ---
+            int totalRequested = (cartons * perCarton) + units;
+
+            // --- Fetch actual stock ---
+            int stock = GetItemStock(itemId);
+
+            // === OUT OF STOCK VALIDATION ===
+            if (totalRequested > stock)
             {
-                DataGridViewRow row = dgvCart.Rows[e.RowIndex];
+                MessageBox.Show(
+                    $"Out of Stock!\nYou requested {totalRequested}, but only {stock} available.",
+                    "Stock Limit", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                // --- Validate UNIT QTY ---
-                if (colName == "UnitQty")
-                {
-                    if (!int.TryParse(row.Cells["UnitQty"].Value?.ToString(), out int units) || units < 0)
-                    {
-                        units = 0;
-                        row.Cells["UnitQty"].Value = "0";   // Auto-correct
-                    }
-                }
+                // Reset to 0 to avoid invalid state
+                // row.Cells["CartonQty"].Value = "0";
+                // row.Cells["UnitQty"].Value = "0";
 
-                // --- Validate CARTON QTY ---
-                if (colName == "CartonQty")
-                {
-                    if (!int.TryParse(row.Cells["CartonQty"].Value?.ToString(), out int cartons) || cartons < 0)
-                    {
-                        cartons = 0;
-                        row.Cells["CartonQty"].Value = "0";   // Auto-correct
-                    }
-                }
-
-                // Recalculate totals now that values are safe
+                // Recalculate totals
                 UpdateRowTotal(row);
                 UpdateGrandTotal();
                 UpdateBalance();
+                return;
             }
+
+            // === If stock is valid, update totals normally ===
+            UpdateRowTotal(row);
+            UpdateGrandTotal();
+            UpdateBalance();
         }
+
 
         private void dgvCart_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
@@ -451,6 +508,10 @@ namespace StoreManager
             txtSearch_recipt_invoice.Text = "";
             lblBalance.Text = "Balance: 0.00";
             txtCashReceived.Text = "";
+            lstSuggestions.Items.Clear();
+            lstSuggestions.Visible = false;
+            txtSearchItemName.Clear();
+            txtSearch_recipt_invoice.Clear();
             UpdateGrandTotal();
         }
 
@@ -527,8 +588,8 @@ namespace StoreManager
 
                             // SAVE TO DB
                             SqlCommand cmd = new SqlCommand(@"
-                        INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance)
-                        VALUES (@inv, @rcp, @item, @carton, @units, @totalqty,  @subtotal, @cash, @bal)", con, tran);
+                        INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold)
+                        VALUES (@inv, @rcp, @item, @carton, @units, @totalqty,  @subtotal, @cash, @bal, GETDATE())", con, tran);
 
                             cmd.Parameters.AddWithValue("@inv", invoiceNo);
                             cmd.Parameters.AddWithValue("@rcp", receiptNo);
@@ -536,25 +597,15 @@ namespace StoreManager
                             cmd.Parameters.AddWithValue("@carton", cartons);
                             cmd.Parameters.AddWithValue("@units", units);
                             cmd.Parameters.AddWithValue("@totalqty", totalUnits);
-                            cmd.Parameters.AddWithValue("@subtotal", subtotal);
+                            cmd.Parameters.AddWithValue("@subtotal", lineTotal);
                             cmd.Parameters.AddWithValue("@cash", cashReceived);
                             cmd.Parameters.AddWithValue("@bal", cashReceived - subtotal);
 
                             cmd.ExecuteNonQuery();
 
-                            //save to sales summary
-                            SqlCommand cmd2 = new SqlCommand(@"INSERT INTO Sales_Summary
-                            (Invoice_No, Receipt_No, Subtotal, CashReceived, Balance)
-                            VALUES (@Invoice_No, @Receipt_No, @Subtotal, @CashReceived, @Balance)", con, tran);
+                           
 
 
-                            cmd2.Parameters.AddWithValue("@Invoice_No", invoiceNo);
-                            cmd2.Parameters.AddWithValue("@Receipt_No", receiptNo);
-                            cmd2.Parameters.AddWithValue("@Subtotal", subtotal);
-                            cmd2.Parameters.AddWithValue("@CashReceived", cashReceived);
-                            cmd2.Parameters.AddWithValue("@Balance", cashReceived - subtotal);
-
-                            cmd2.ExecuteNonQuery();
 
 
                             // OPTIONAL: Deduct stock here
@@ -571,6 +622,19 @@ namespace StoreManager
 
                             cmdStock.ExecuteNonQuery();
                         }
+                        //save to sales summary
+                        SqlCommand cmd2 = new SqlCommand(@"INSERT INTO Sales_Summary
+                            (Invoice_No, Receipt_No, Subtotal, CashReceived, Balance, Date_Sold)
+                            VALUES (@Invoice_No, @Receipt_No, @Subtotal, @CashReceived, @Balance, GETDATE())", con, tran);
+
+
+                        cmd2.Parameters.AddWithValue("@Invoice_No", invoiceNo);
+                        cmd2.Parameters.AddWithValue("@Receipt_No", receiptNo);
+                        cmd2.Parameters.AddWithValue("@Subtotal", subtotal);
+                        cmd2.Parameters.AddWithValue("@CashReceived", cashReceived);
+                        cmd2.Parameters.AddWithValue("@Balance", cashReceived - subtotal);
+
+                        cmd2.ExecuteNonQuery();
 
                         tran.Commit();
                     }
@@ -715,8 +779,45 @@ namespace StoreManager
 
                     try
                     {
-                        // 1. Restore stock first
-                        SqlCommand cmdStock = new SqlCommand(@"
+                    // 🔹 0. LOG INTO DeletedSales (VERY IMPORTANT)
+                    SqlCommand cmdLog = new SqlCommand(@"
+                INSERT INTO DeletedSales
+                (Invoice_No, Receipt_No, Subtotal, CashReceived, Balance, DeletedBy)
+                SELECT 
+                    Invoice_No, Receipt_No, Subtotal, CashReceived, Balance, @user
+                FROM Sales_Summary
+                WHERE Invoice_No = @search OR Receipt_No = @search
+            ", con, tran);
+
+                    cmdLog.Parameters.AddWithValue("@search", search);
+                    cmdLog.Parameters.AddWithValue("@user", "Admin"); // later use logged-in user
+                    cmdLog.ExecuteNonQuery();
+
+                    // 🔹 0b. LOG DELETED ITEMS (VERY IMPORTANT)
+                    SqlCommand cmdLogItems = new SqlCommand(@"
+                     INSERT INTO DeletedItems
+                        (
+                            Invoice_No, Receipt_No, ItemID,
+                            Carton_Qty, Units, Total_Qty,
+                            Subtotal, Cash_Received, Balance, Date_Sold,
+                            DeletedBy
+                        )
+                        SELECT
+                            Invoice_No, Receipt_No, ItemID,
+                            Carton_Qty, Units, Total_Qty,
+                            Subtotal, Cash_Received, Balance, Date_Sold,
+                            @user
+                        FROM Sales
+                        WHERE Invoice_No = @search OR Receipt_No = @search;
+                        ", con, tran);
+
+                    cmdLogItems.Parameters.AddWithValue("@search", search);
+                    cmdLogItems.Parameters.AddWithValue("@user", "Admin");
+                    cmdLogItems.ExecuteNonQuery();
+
+
+                    // 1. Restore stock first
+                    SqlCommand cmdStock = new SqlCommand(@"
                 UPDATE Items 
                 SET Total_Quantity = Total_Quantity + s.Total_Qty
                 FROM Sales s
@@ -936,8 +1037,8 @@ namespace StoreManager
 
                         // Insert into Sales table
                         SqlCommand cmdInsert = new SqlCommand(@"
-                    INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance)
-                    VALUES (@inv, @rcp, @item, @carton, @units, @totalqty, @subtotal, @cash, @bal)
+                    INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold)
+                    VALUES (@inv, @rcp, @item, @carton, @units, @totalqty, @subtotal, @cash, @bal, GETDATE())
                 ", con, tran);
 
                         cmdInsert.Parameters.AddWithValue("@inv", txtSearch_recipt_invoice.Tag.ToString());
@@ -946,7 +1047,7 @@ namespace StoreManager
                         cmdInsert.Parameters.AddWithValue("@carton", cartons);
                         cmdInsert.Parameters.AddWithValue("@units", units);
                         cmdInsert.Parameters.AddWithValue("@totalqty", totalUnits);
-                        cmdInsert.Parameters.AddWithValue("@subtotal", subtotal);
+                        cmdInsert.Parameters.AddWithValue("@subtotal", lineTotal);
                         cmdInsert.Parameters.AddWithValue("@cash", cashReceived);
                         cmdInsert.Parameters.AddWithValue("@bal", cashReceived - subtotal);
 
@@ -965,8 +1066,8 @@ namespace StoreManager
 
                     // Insert into Sales_Summary
                     SqlCommand cmdSummary = new SqlCommand(@"
-                INSERT INTO Sales_Summary (Invoice_No, Receipt_No, Subtotal, CashReceived, Balance)
-                VALUES (@inv, @rcp, @subtotal, @cash, @bal)
+                INSERT INTO Sales_Summary (Invoice_No, Receipt_No, Subtotal, CashReceived, Balance, Date_Sold)
+                VALUES (@inv, @rcp, @subtotal, @cash, @bal, GETDATE())
             ", con, tran);
                     cmdSummary.Parameters.AddWithValue("@inv", txtSearch_recipt_invoice.Tag.ToString());
                     cmdSummary.Parameters.AddWithValue("@rcp", txtSearch_recipt_invoice.Text.Trim());
@@ -996,5 +1097,97 @@ namespace StoreManager
             }
         }
 
+        private void txtSearchItemName_TextChanged(object sender, EventArgs e)
+        {
+            lstSuggestions.Items.Clear();
+
+            if (txtSearchItemName.Text.Trim().Length < 1)
+            {
+                lstSuggestions.Visible = false;
+                return;
+            }
+
+            using (SqlConnection con = DB.GetCon())
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand(
+                    "SELECT TOP 20 ItemID, ItemName FROM Items WHERE ItemName LIKE @s + '%' ORDER BY ItemName",
+                    con
+                );
+                cmd.Parameters.AddWithValue("@s", txtSearchItemName.Text.Trim());
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        lstSuggestions.Items.Add(new
+                        {
+                            ID = dr["ItemID"].ToString(),
+                            Name = dr["ItemName"].ToString()
+                        });
+                    }
+                }
+            }
+
+            lstSuggestions.DisplayMember = "Name";
+            lstSuggestions.ValueMember = "ID";
+            lstSuggestions.Visible = lstSuggestions.Items.Count > 0;
+        }
+
+
+        private void lstSuggestions_Click(object sender, EventArgs e)
+        {
+            if (lstSuggestions.SelectedItem == null) return;
+
+            var selected = (dynamic)lstSuggestions.SelectedItem;
+            string itemId = selected.ID;
+
+            // Retrieve full item details
+            using (SqlConnection con = DB.GetCon())
+            {
+                con.Open();
+                SqlCommand cmd = new SqlCommand(@"
+            SELECT ItemID, ItemName, Barcode, Quantity_SP, 
+                   Per_Carton_Quantity, Carton_SP
+            FROM Items
+            WHERE ItemID = @id", con);
+
+                cmd.Parameters.AddWithValue("@id", itemId);
+
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    if (dr.Read())
+                    {
+                        string id = dr["ItemID"].ToString();
+                        string name = dr["ItemName"].ToString();
+                        string barcode = dr["Barcode"].ToString();
+
+                        decimal unitPrice =
+                            dr["Quantity_SP"] == DBNull.Value ? 0m : Convert.ToDecimal(dr["Quantity_SP"]);
+
+                        int perCarton =
+                            dr["Per_Carton_Quantity"] == DBNull.Value ? 1 : Convert.ToInt32(dr["Per_Carton_Quantity"]);
+
+                        decimal cartonPrice =
+                            dr["Carton_SP"] == DBNull.Value ? 0m : Convert.ToDecimal(dr["Carton_SP"]);
+
+                        // ✔ Now call your function with correct parameters
+                        AddItemToCart(id, name, barcode, unitPrice, perCarton, cartonPrice);
+                    }
+                }
+            }
+
+            // Hide suggestion dropdown
+            lstSuggestions.Visible = false;
+            txtSearchItemName.Clear();
+            txtSearchItemName.Focus();
+        }
+
+        private void lstSuggestions_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        
     }
 }

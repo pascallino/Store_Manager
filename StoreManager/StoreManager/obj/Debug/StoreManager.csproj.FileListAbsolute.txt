@@ -14,3 +14,9 @@ C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmRes
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmAuthorize.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmAdjustQuanity.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmSales.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmLowInStock.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQuerySale.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmViewSale.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQueryDeletedSale.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQueryPurchase.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQuerySalesItems.resources

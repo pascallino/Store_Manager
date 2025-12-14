@@ -179,33 +179,78 @@ namespace StoreManager
                 MessageBox.Show("Quantity cannot be negative.", "Error");
                 return;
             }
+            if (string.IsNullOrWhiteSpace(txtItemID.Text))
+            {
+                MessageBox.Show("Please select an item.", "Error");
+                return;
+            }
 
             int itemID = int.Parse(txtItemID.Text);
 
-            // UPDATE the Total_Quantity directly
             using (SqlConnection con = DB.GetCon())
             {
                 con.Open();
+                SqlTransaction tran = con.BeginTransaction();
 
-                string query = @"
-            UPDATE Items
-            SET Total_Quantity = @NewQty
-            WHERE ItemID = @ItemID
-        ";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@NewQty", newQty);
-                    cmd.Parameters.AddWithValue("@ItemID", itemID);
-                    cmd.ExecuteNonQuery();
+                    // 1️⃣ Get current stock
+                    int currentQty = 0;
+                    SqlCommand cmdGet = new SqlCommand(
+                        "SELECT Total_Quantity FROM Items WHERE ItemID=@id",
+                        con, tran);
+                    cmdGet.Parameters.AddWithValue("@id", itemID);
+                    currentQty = Convert.ToInt32(cmdGet.ExecuteScalar());
+
+                    // 2️⃣ Calculate difference
+                    int diff = newQty - currentQty;
+
+                    int cr = 0;
+                    int dr = 0;
+
+                    if (diff > 0)
+                        cr = diff;     // Increase
+                    else if (diff < 0)
+                        dr = Math.Abs(diff); // Reduction
+
+                    // 3️⃣ Update Items stock
+                    SqlCommand cmdUpdate = new SqlCommand(@"
+                UPDATE Items 
+                SET Total_Quantity = @qty 
+                WHERE ItemID = @id",
+                        con, tran);
+
+                    cmdUpdate.Parameters.AddWithValue("@qty", newQty);
+                    cmdUpdate.Parameters.AddWithValue("@id", itemID);
+                    cmdUpdate.ExecuteNonQuery();
+
+                    // 4️⃣ Log into PurchasedItems
+                    SqlCommand cmdLog = new SqlCommand(@"
+                INSERT INTO PurchasedItems
+                (ItemID, Cr, Dr, Purchase_Status)
+                VALUES
+                (@itemID, @cr, @dr, 'Adjustment')
+            ", con, tran);
+
+                    cmdLog.Parameters.AddWithValue("@itemID", itemID);
+                    cmdLog.Parameters.AddWithValue("@cr", cr);
+                    cmdLog.Parameters.AddWithValue("@dr", dr);
+                    cmdLog.ExecuteNonQuery();
+
+                    tran.Commit();
+
+                    MessageBox.Show("Stock adjusted successfully.", "Success");
+                    ClearItemFields();
+                    LoadItems();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    MessageBox.Show("Adjustment failed: " + ex.Message);
                 }
             }
-
-            MessageBox.Show("Quantity adjusted successfully.", "Success");
-
-            ClearItemFields();
-            LoadItems(); // refresh table
         }
+
 
 
         private void frmAdjustQuanity_Load(object sender, EventArgs e)

@@ -252,64 +252,85 @@ namespace StoreManager
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            // Validate ItemID
             if (string.IsNullOrWhiteSpace(txtItemID.Text))
             {
                 MessageBox.Show("Please select an item.", "Error");
                 return;
             }
 
-            // Validate numeric unit quantity
             if (!int.TryParse(txtQty.Text, out int unitQty))
             {
                 MessageBox.Show("Invalid unit quantity.", "Error");
                 return;
             }
 
-            // Validate carton quantity
             if (!int.TryParse(txtCartonQty.Text, out int cartonQty))
             {
                 MessageBox.Show("Invalid carton quantity.", "Error");
                 return;
             }
 
-            // Validate pieces per carton
             if (!int.TryParse(lblPerCartonQty.Text, out int perCarton))
             {
-                MessageBox.Show("Invalid Per Carton Quantity.", "Error");
+                MessageBox.Show("Invalid per-carton quantity.", "Error");
                 return;
             }
 
-            // Calculate new total stock to add
             int totalToAdd = unitQty + (cartonQty * perCarton);
 
-            // Convert ItemID
+            if (totalToAdd <= 0)
+            {
+                MessageBox.Show("Quantity must be greater than zero.", "Error");
+                return;
+            }
+
             int itemID = int.Parse(txtItemID.Text);
 
-            // UPDATE THE DATABASE
             using (SqlConnection con = DB.GetCon())
             {
                 con.Open();
+                SqlTransaction tran = con.BeginTransaction();
 
-                string query = @"
-            UPDATE Items 
-            SET Total_Quantity = Total_Quantity + @AddQty
-            WHERE ItemID = @ItemID
-        ";
-
-                using (SqlCommand cmd = new SqlCommand(query, con))
+                try
                 {
-                    cmd.Parameters.AddWithValue("@AddQty", totalToAdd);
-                    cmd.Parameters.AddWithValue("@ItemID", itemID);
-                    cmd.ExecuteNonQuery();
+                    // 1️⃣ Increase stock
+                    SqlCommand cmdUpdate = new SqlCommand(@"
+                UPDATE Items
+                SET Total_Quantity = Total_Quantity + @qty
+                WHERE ItemID = @id
+            ", con, tran);
+
+                    cmdUpdate.Parameters.AddWithValue("@qty", totalToAdd);
+                    cmdUpdate.Parameters.AddWithValue("@id", itemID);
+                    cmdUpdate.ExecuteNonQuery();
+
+                    // 2️⃣ Log into PurchasedItems (CR only)
+                    SqlCommand cmdLog = new SqlCommand(@"
+                INSERT INTO PurchasedItems
+                (ItemID, Cr, Dr, Purchase_Status)
+                VALUES
+                (@itemID, @cr, 0, 'Purchase')
+            ", con, tran);
+
+                    cmdLog.Parameters.AddWithValue("@itemID", itemID);
+                    cmdLog.Parameters.AddWithValue("@cr", totalToAdd);
+                    cmdLog.ExecuteNonQuery();
+
+                    tran.Commit();
+
+                    MessageBox.Show("Item restocked successfully.", "Success");
+
+                    ClearItemFields();
+                    LoadItems();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    MessageBox.Show("Restock failed: " + ex.Message);
                 }
             }
-
-            MessageBox.Show("Item restocked successfully.", "Success");
-
-            ClearItemFields();
-            LoadItems(); // Refresh grid
         }
+
 
 
         private void button1_Click(object sender, EventArgs e)
