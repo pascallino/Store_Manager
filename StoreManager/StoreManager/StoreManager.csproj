@@ -70,6 +70,12 @@
     <Compile Include="frmItems.Designer.cs">
       <DependentUpon>frmItems.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmLogin.Designer.cs">
+      <DependentUpon>frmLogin.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmLowInStock.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,6 +130,12 @@
     <Compile Include="frmSplashscreen.Designer.cs">
       <DependentUpon>frmSplashscreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="frmUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmUser.Designer.cs">
+      <DependentUpon>frmUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="frmViewSale.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmItems.resx">
       <DependentUpon>frmItems.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmLogin.resx">
+      <DependentUpon>frmLogin.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmLowInStock.resx">
       <DependentUpon>frmLowInStock.cs</DependentUpon>
@@ -169,6 +184,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSplashscreen.resx">
       <DependentUpon>frmSplashscreen.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmUser.resx">
+      <DependentUpon>frmUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmViewSale.resx">
       <DependentUpon>frmViewSale.cs</DependentUpon>

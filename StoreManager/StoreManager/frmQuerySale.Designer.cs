@@ -25,7 +25,7 @@
         private System.Windows.Forms.DateTimePicker dtFrom;
         private System.Windows.Forms.DateTimePicker dtTo;
         private System.Windows.Forms.DataGridView dgvSummary;
-        private System.Windows.Forms.Button btnSearch;
+    
 
         /// <summary>
         /// Required method for Designer support - do not modify
@@ -36,10 +36,11 @@
             this.dtFrom = new System.Windows.Forms.DateTimePicker();
             this.dtTo = new System.Windows.Forms.DateTimePicker();
             this.txtCashReceived_ReceiptNo = new System.Windows.Forms.TextBox();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.dgvSummary = new System.Windows.Forms.DataGridView();
             this.labelTotal = new System.Windows.Forms.Label();
             this.lblTotalSales = new System.Windows.Forms.Label();
+            this.cmbUsers = new System.Windows.Forms.ComboBox();
+            this.lblUser = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).BeginInit();
             this.SuspendLayout();
             // 
@@ -50,7 +51,6 @@
             this.dtFrom.Name = "dtFrom";
             this.dtFrom.Size = new System.Drawing.Size(394, 38);
             this.dtFrom.TabIndex = 0;
-         
             // 
             // dtTo
             // 
@@ -63,21 +63,11 @@
             // txtCashReceived_ReceiptNo
             // 
             this.txtCashReceived_ReceiptNo.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCashReceived_ReceiptNo.Location = new System.Drawing.Point(895, 24);
+            this.txtCashReceived_ReceiptNo.Location = new System.Drawing.Point(1063, 24);
             this.txtCashReceived_ReceiptNo.Name = "txtCashReceived_ReceiptNo";
             this.txtCashReceived_ReceiptNo.Size = new System.Drawing.Size(280, 31);
             this.txtCashReceived_ReceiptNo.TabIndex = 2;
             this.txtCashReceived_ReceiptNo.TextChanged += new System.EventHandler(this.txtCashReceived_ReceiptNo_TextChanged);
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSearch.Location = new System.Drawing.Point(1181, 18);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(100, 40);
-            this.btnSearch.TabIndex = 3;
-            this.btnSearch.Text = "Search";
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // dgvSummary
             // 
@@ -111,17 +101,40 @@
             this.lblTotalSales.TabIndex = 6;
             this.lblTotalSales.Text = "0.00";
             // 
+            // cmbUsers
+            // 
+            this.cmbUsers.BackColor = System.Drawing.Color.White;
+            this.cmbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUsers.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbUsers.ForeColor = System.Drawing.Color.Black;
+            this.cmbUsers.FormattingEnabled = true;
+            this.cmbUsers.Location = new System.Drawing.Point(1064, 61);
+            this.cmbUsers.Name = "cmbUsers";
+            this.cmbUsers.Size = new System.Drawing.Size(280, 31);
+            this.cmbUsers.TabIndex = 7;
+            // 
+            // lblUser
+            // 
+            this.lblUser.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblUser.Location = new System.Drawing.Point(918, 26);
+            this.lblUser.Name = "lblUser";
+            this.lblUser.Size = new System.Drawing.Size(150, 23);
+            this.lblUser.TabIndex = 0;
+            this.lblUser.Text = "Receipt\\Invoice No";
+            // 
             // frmQuerySale
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1371, 609);
+            this.Controls.Add(this.lblUser);
+            this.Controls.Add(this.cmbUsers);
             this.Controls.Add(this.labelTotal);
             this.Controls.Add(this.lblTotalSales);
             this.Controls.Add(this.dtFrom);
             this.Controls.Add(this.dtTo);
             this.Controls.Add(this.txtCashReceived_ReceiptNo);
-            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.dgvSummary);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -139,5 +152,7 @@
 
         private System.Windows.Forms.Label labelTotal;
         private System.Windows.Forms.Label lblTotalSales;
+        private System.Windows.Forms.ComboBox cmbUsers;
+        private System.Windows.Forms.Label lblUser;
     }
 }

@@ -43,11 +43,11 @@
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.ForeColor = System.Drawing.SystemColors.AppWorkspace;
-            this.label1.Location = new System.Drawing.Point(576, 9);
+            this.label1.Location = new System.Drawing.Point(599, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(211, 26);
+            this.label1.Size = new System.Drawing.Size(185, 26);
             this.label1.TabIndex = 1;
-            this.label1.Text = "Authorize Quantity";
+            this.label1.Text = "Admin Password";
             // 
             // txtpassword
             // 
@@ -56,7 +56,7 @@
             this.txtpassword.Name = "txtpassword";
             this.txtpassword.PasswordChar = '*';
             this.txtpassword.Size = new System.Drawing.Size(364, 34);
-            this.txtpassword.TabIndex = 5;
+            this.txtpassword.TabIndex = 0;
             // 
             // label11
             // 
@@ -76,7 +76,7 @@
             this.btnAuthorize.Location = new System.Drawing.Point(640, 86);
             this.btnAuthorize.Name = "btnAuthorize";
             this.btnAuthorize.Size = new System.Drawing.Size(87, 39);
-            this.btnAuthorize.TabIndex = 0;
+            this.btnAuthorize.TabIndex = 1;
             this.btnAuthorize.Text = "Open";
             this.btnAuthorize.UseVisualStyleBackColor = false;
             this.btnAuthorize.Click += new System.EventHandler(this.btnAuthorize_Click);

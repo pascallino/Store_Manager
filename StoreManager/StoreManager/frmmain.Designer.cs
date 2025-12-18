@@ -32,6 +32,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuExit = new System.Windows.Forms.ToolStripMenuItem();
+            this.logOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.inventoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuAddItem = new System.Windows.Forms.ToolStripMenuItem();
             this.restockItemsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -43,13 +44,11 @@
             this.seachToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSearchSales = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPurchaseRrcords = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuSoldItems = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.menuSoldItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.newUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
-            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -61,6 +60,7 @@
             this.inventoryToolStripMenuItem,
             this.salesToolStripMenuItem,
             this.seachToolStripMenuItem,
+            this.newUserToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -72,7 +72,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.menuExit});
+            this.menuExit,
+            this.logOutToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(64, 36);
             this.fileToolStripMenuItem.Text = "&File";
@@ -80,9 +81,16 @@
             // menuExit
             // 
             this.menuExit.Name = "menuExit";
-            this.menuExit.Size = new System.Drawing.Size(133, 36);
+            this.menuExit.Size = new System.Drawing.Size(178, 36);
             this.menuExit.Text = "Exit";
             this.menuExit.Click += new System.EventHandler(this.menuExit_Click);
+            // 
+            // logOutToolStripMenuItem
+            // 
+            this.logOutToolStripMenuItem.Name = "logOutToolStripMenuItem";
+            this.logOutToolStripMenuItem.Size = new System.Drawing.Size(178, 36);
+            this.logOutToolStripMenuItem.Text = "Log out";
+            this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
             // 
             // inventoryToolStripMenuItem
             // 
@@ -170,6 +178,13 @@
             this.menuPurchaseRrcords.Text = "Purchase Records";
             this.menuPurchaseRrcords.Click += new System.EventHandler(this.menuPurchaseRrcords_Click);
             // 
+            // menuSoldItems
+            // 
+            this.menuSoldItems.Name = "menuSoldItems";
+            this.menuSoldItems.Size = new System.Drawing.Size(348, 36);
+            this.menuSoldItems.Text = "Sold Items Records";
+            this.menuSoldItems.Click += new System.EventHandler(this.menuSoldItems_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -184,29 +199,12 @@
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(161, 36);
             this.aboutToolStripMenuItem.Text = "About";
             // 
-            // statusStrip1
+            // newUserToolStripMenuItem
             // 
-            this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripStatusLabel1});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 425);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 25);
-            this.statusStrip1.TabIndex = 4;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStripStatusLabel1
-            // 
-            this.toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            this.toolStripStatusLabel1.Size = new System.Drawing.Size(226, 20);
-            this.toolStripStatusLabel1.Text = "WELCOME TO STORE MANAGER ";
-            // 
-            // menuSoldItems
-            // 
-            this.menuSoldItems.Name = "menuSoldItems";
-            this.menuSoldItems.Size = new System.Drawing.Size(348, 36);
-            this.menuSoldItems.Text = "Sold Items Records";
-            this.menuSoldItems.Click += new System.EventHandler(this.menuSoldItems_Click);
+            this.newUserToolStripMenuItem.Name = "newUserToolStripMenuItem";
+            this.newUserToolStripMenuItem.Size = new System.Drawing.Size(129, 36);
+            this.newUserToolStripMenuItem.Text = "New User";
+            this.newUserToolStripMenuItem.Click += new System.EventHandler(this.newUserToolStripMenuItem_Click);
             // 
             // frmmain
             // 
@@ -215,7 +213,6 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menuStrip1;
@@ -226,8 +223,6 @@
             this.Load += new System.EventHandler(this.frmmain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.statusStrip1.ResumeLayout(false);
-            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -245,8 +240,6 @@
         private System.Windows.Forms.ToolStripMenuItem menuSellItem;
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
-        private System.Windows.Forms.StatusStrip statusStrip1;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel1;
         private System.Windows.Forms.ToolStripMenuItem menuAdminAdjustItem;
         private System.Windows.Forms.ToolStripMenuItem menuLowInStock;
         private System.Windows.Forms.ToolStripMenuItem seachToolStripMenuItem;
@@ -254,5 +247,7 @@
         private System.Windows.Forms.ToolStripMenuItem menuAudit;
         private System.Windows.Forms.ToolStripMenuItem menuPurchaseRrcords;
         private System.Windows.Forms.ToolStripMenuItem menuSoldItems;
+        private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newUserToolStripMenuItem;
     }
 }

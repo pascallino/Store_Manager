@@ -12,9 +12,30 @@ namespace StoreManager
 {
     public partial class frmmain : Form
     {
-        public frmmain()
+        private string _currentUser;
+        private int _currentId;
+        public frmmain(string u, int id)
         {
+       
             InitializeComponent();
+            _currentUser = u;
+            _currentId = id;
+
+            ToolStrip toolStrip = new ToolStrip();
+            ToolStripLabel lblUser = new ToolStripLabel();
+
+            lblUser.Font = new Font("Segoe UI", 17, FontStyle.Bold);
+
+            toolStrip.Dock = DockStyle.Top;
+            lblUser.Font = new Font("Segoe UI", 17, FontStyle.Bold);
+            lblUser.Text = $"Logged in as {_currentUser}";
+            lblUser.Alignment = ToolStripItemAlignment.Right;
+
+            toolStrip.Items.Add(lblUser);
+
+            this.Controls.Add(toolStrip);
+
+
         }
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -24,7 +45,7 @@ namespace StoreManager
 
         private void frmmain_Load(object sender, EventArgs e)
         {
-          
+             
         }
 
         private void statusStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -57,14 +78,14 @@ namespace StoreManager
 
         private void menuAddItem_Click(object sender, EventArgs e)
         {
-            frmItems item = new frmItems();
+            frmItems item = new frmItems(_currentId);
             item.ShowDialog();
 
         }
 
         private void restockItemsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frmRestockItems restockitem = new frmRestockItems();
+            frmRestockItems restockitem = new frmRestockItems(_currentId);
             restockitem.ShowDialog();
         }
 
@@ -76,7 +97,7 @@ namespace StoreManager
 
         private void menuSellItem_Click(object sender, EventArgs e)
         {
-            frmSales sale = new frmSales();
+            frmSales sale = new frmSales(_currentId);
             sale.Show();
                
         }
@@ -109,6 +130,21 @@ namespace StoreManager
         {
             frmQuerySalesItems s = new frmQuerySalesItems();
             s.ShowDialog();
+        }
+
+        private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            frmLogin login = new frmLogin();
+            login.Show();
+
+
+        }
+
+        private void newUserToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmAuthorize a = new frmAuthorize("user");
+            a.ShowDialog();
         }
     }
 }

@@ -33,13 +33,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lbltotalinfo = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtPerCartonQty = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label14 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
-            this.panel5 = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.txtCartonSP = new System.Windows.Forms.TextBox();
@@ -65,10 +65,8 @@
             this.label12 = new System.Windows.Forms.Label();
             this.txtSearch = new System.Windows.Forms.TextBox();
             this.txtItemID = new System.Windows.Forms.Label();
-            this.lbltotalinfo = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
-            this.panel5.SuspendLayout();
             this.panel3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             this.SuspendLayout();
@@ -98,14 +96,15 @@
             // 
             this.panel2.BackColor = System.Drawing.Color.Transparent;
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.lbltotalinfo);
+            this.panel2.Controls.Add(this.btnSave);
             this.panel2.Controls.Add(this.label4);
             this.panel2.Controls.Add(this.txtPerCartonQty);
             this.panel2.Controls.Add(this.label17);
             this.panel2.Controls.Add(this.label13);
             this.panel2.Controls.Add(this.label14);
             this.panel2.Controls.Add(this.label15);
-            this.panel2.Controls.Add(this.panel5);
             this.panel2.Controls.Add(this.txtCartonSP);
             this.panel2.Controls.Add(this.txtCartonCP);
             this.panel2.Controls.Add(this.txtCartonQty);
@@ -125,6 +124,16 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(575, 620);
             this.panel2.TabIndex = 2;
+            // 
+            // lbltotalinfo
+            // 
+            this.lbltotalinfo.AutoSize = true;
+            this.lbltotalinfo.Font = new System.Drawing.Font("Comic Sans MS", 10.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbltotalinfo.ForeColor = System.Drawing.Color.Transparent;
+            this.lbltotalinfo.Location = new System.Drawing.Point(166, 580);
+            this.lbltotalinfo.Name = "lbltotalinfo";
+            this.lbltotalinfo.Size = new System.Drawing.Size(0, 27);
+            this.lbltotalinfo.TabIndex = 23;
             // 
             // label4
             // 
@@ -185,39 +194,32 @@
             this.label15.TabIndex = 17;
             this.label15.Text = "Qty";
             // 
-            // panel5
-            // 
-            this.panel5.BackColor = System.Drawing.Color.Transparent;
-            this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel5.Controls.Add(this.button1);
-            this.panel5.Controls.Add(this.btnSave);
-            this.panel5.Location = new System.Drawing.Point(82, 331);
-            this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(472, 67);
-            this.panel5.TabIndex = 8;
-            // 
             // button1
             // 
-            this.button1.BackColor = System.Drawing.Color.Maroon;
-            this.button1.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.ForeColor = System.Drawing.Color.AliceBlue;
-            this.button1.Location = new System.Drawing.Point(216, 12);
+            this.button1.BackColor = System.Drawing.Color.Firebrick;
+            this.button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.button1.ForeColor = System.Drawing.Color.White;
+            this.button1.Location = new System.Drawing.Point(299, 366);
+            this.button1.Margin = new System.Windows.Forms.Padding(4);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(135, 42);
-            this.button1.TabIndex = 12;
+            this.button1.Size = new System.Drawing.Size(120, 49);
+            this.button1.TabIndex = 0;
             this.button1.Text = "Clear";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // btnSave
             // 
-            this.btnSave.BackColor = System.Drawing.SystemColors.Highlight;
-            this.btnSave.Font = new System.Drawing.Font("Times New Roman", 13.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSave.ForeColor = System.Drawing.Color.AliceBlue;
-            this.btnSave.Location = new System.Drawing.Point(88, 12);
+            this.btnSave.BackColor = System.Drawing.Color.SeaGreen;
+            this.btnSave.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnSave.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnSave.ForeColor = System.Drawing.Color.White;
+            this.btnSave.Location = new System.Drawing.Point(171, 366);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(122, 42);
-            this.btnSave.TabIndex = 11;
+            this.btnSave.Size = new System.Drawing.Size(120, 49);
+            this.btnSave.TabIndex = 0;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = false;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -464,16 +466,6 @@
             this.txtItemID.TabIndex = 5;
             this.txtItemID.Visible = false;
             // 
-            // lbltotalinfo
-            // 
-            this.lbltotalinfo.AutoSize = true;
-            this.lbltotalinfo.Font = new System.Drawing.Font("Comic Sans MS", 10.8F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbltotalinfo.ForeColor = System.Drawing.Color.Transparent;
-            this.lbltotalinfo.Location = new System.Drawing.Point(166, 580);
-            this.lbltotalinfo.Name = "lbltotalinfo";
-            this.lbltotalinfo.Size = new System.Drawing.Size(0, 27);
-            this.lbltotalinfo.TabIndex = 23;
-            // 
             // frmItems
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -497,7 +489,6 @@
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
-            this.panel5.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).EndInit();
@@ -518,7 +509,6 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtQty;
         private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Panel panel5;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label label12;

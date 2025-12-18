@@ -20,3 +20,5 @@ C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmVie
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQueryDeletedSale.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQueryPurchase.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQuerySalesItems.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmLogin.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmUser.resources

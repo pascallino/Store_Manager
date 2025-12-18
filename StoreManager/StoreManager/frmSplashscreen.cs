@@ -28,13 +28,13 @@ namespace StoreManager
         {
 
             progressBar1.Value += 80;
-            frmmain main = new frmmain();
+            
 
             if (progressBar1.Value  > 100)
             {
                 this.Hide();
-                main.FormClosed += (s, args) => Application.Exit();
-                main.Show();
+                frmLogin login = new frmLogin();
+                login.Show();
                 timer1.Stop();
                 
 

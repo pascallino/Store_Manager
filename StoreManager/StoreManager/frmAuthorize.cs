@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StoreManager;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Configuration;
+using System.Data.SqlClient;
+
 
 namespace StoreManager
 {
@@ -21,39 +25,70 @@ namespace StoreManager
             checkform = value;
         }
 
-       
+
 
         private void btnAuthorize_Click(object sender, EventArgs e)
         {
-
-            string password = txtpassword.Text;
-            if (password == "admin")
+            if (string.IsNullOrWhiteSpace(txtpassword.Text))
             {
-                if (checkform == "Audit")
+                MessageBox.Show(
+                    "Please enter admin password",
+                    "Authorization",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            int adminUserId = 0;
+
+            using (SqlConnection con = DB.GetCon())
+            using (SqlCommand cmd = new SqlCommand(
+                @"SELECT TOP 1 UserID 
+          FROM Users 
+          WHERE UserType = 'Admin' AND Password = @P", con))
+            {
+                cmd.Parameters.AddWithValue("@P", txtpassword.Text.Trim());
+
+                con.Open();
+                object result = cmd.ExecuteScalar();
+
+                if (result == null)
                 {
-                    frmQueryDeletedSale q = new frmQueryDeletedSale();
-                    q.ShowDialog();
-                    this.Hide();
+                    MessageBox.Show(
+                        "Wrong admin password.\nAccess denied.",
+                        "Authorization Failed",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return;
                 }
-                else
-                {
-                    frmAdjustQuanity adjustQ = new frmAdjustQuanity();
-                    adjustQ.ShowDialog();
-                    this.Hide();
-                }
+
+                adminUserId = Convert.ToInt32(result);
+            }
+
+            // ✅ AUTHORIZED ADMIN
+            if (checkform == "Audit")
+            {
+                frmQueryDeletedSale q = new frmQueryDeletedSale();
+                q.ShowDialog();
+            }
+            else if (checkform == "user")
+            {
+                frmUser u = new frmUser(adminUserId);
+                u.ShowDialog();
             }
             else
             {
-                DialogResult dr = MessageBox.Show(
-                   "Wrong Password, Please try again?",
-                   "Confirm Password", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-
+                frmAdjustQuanity adjustQ = new frmAdjustQuanity();
+                adjustQ.ShowDialog();
             }
+
+            this.Close(); // close authorization form
         }
-   
+
+
         private void frmAuthorize_Load(object sender, EventArgs e)
         {
-
+            this.AcceptButton = this.btnAuthorize;
         }
     }
 }

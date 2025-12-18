@@ -36,7 +36,7 @@ namespace StoreManager
                 viewBtn.Width = 80;
                 dgvSummary.Columns.Add(viewBtn);
             }
-          
+
 
 
             dgvSummary.Columns["Subtotal"].DefaultCellStyle.Format = "N2";
@@ -209,7 +209,7 @@ namespace StoreManager
         {
             ApplyFilters();
         }
-       
+
 
     }
 }

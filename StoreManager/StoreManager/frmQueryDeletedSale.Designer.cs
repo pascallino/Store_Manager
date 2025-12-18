@@ -40,6 +40,7 @@
             this.dgvSummary = new System.Windows.Forms.DataGridView();
             this.labelTotal = new System.Windows.Forms.Label();
             this.lblTotalSales = new System.Windows.Forms.Label();
+            this.cmbUsers = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvSummary)).BeginInit();
             this.SuspendLayout();
             // 
@@ -108,11 +109,26 @@
             this.lblTotalSales.TabIndex = 6;
             this.lblTotalSales.Text = "0.00";
             // 
+            // cmbUsers
+            // 
+            this.cmbUsers.BackColor = System.Drawing.Color.White;
+            this.cmbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUsers.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbUsers.ForeColor = System.Drawing.Color.Black;
+            this.cmbUsers.FormattingEnabled = true;
+            this.cmbUsers.Location = new System.Drawing.Point(895, 61);
+            this.cmbUsers.Name = "cmbUsers";
+            this.cmbUsers.Size = new System.Drawing.Size(280, 31);
+            this.cmbUsers.TabIndex = 7;
+           
+            // 
             // frmQueryDeletedSale
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1371, 609);
+            this.Controls.Add(this.cmbUsers);
             this.Controls.Add(this.labelTotal);
             this.Controls.Add(this.lblTotalSales);
             this.Controls.Add(this.dtFrom);
@@ -136,5 +152,6 @@
 
         private System.Windows.Forms.Label labelTotal;
         private System.Windows.Forms.Label lblTotalSales;
+        private System.Windows.Forms.ComboBox cmbUsers;
     }
 }

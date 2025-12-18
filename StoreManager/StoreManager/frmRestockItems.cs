@@ -15,7 +15,8 @@ namespace StoreManager
 {
     public partial class frmRestockItems : Form
     {
-        public frmRestockItems()
+        private int _currentId;
+        public frmRestockItems(int Id)
         {
             InitializeComponent();
             dgvRItems.CellClick += dgvRItems_CellClick;
@@ -23,6 +24,7 @@ namespace StoreManager
             dgvRItems.CellMouseLeave += dgvRItems_CellMouseLeave;
             txtCartonQty.LostFocus += txtCartonQty_LostFocus;
             txtQty.LostFocus += txtQty_LostFocus;
+            _currentId = Id;
         }
         private void ResetButtonColors()
         {
@@ -307,13 +309,14 @@ namespace StoreManager
                     // 2️⃣ Log into PurchasedItems (CR only)
                     SqlCommand cmdLog = new SqlCommand(@"
                 INSERT INTO PurchasedItems
-                (ItemID, Cr, Dr, Purchase_Status)
+                (ItemID, Cr, Dr, Purchase_Status, AddedBy)
                 VALUES
-                (@itemID, @cr, 0, 'Purchase')
+                (@itemID, @cr, 0, 'Purchase', @AddedBy)
             ", con, tran);
 
                     cmdLog.Parameters.AddWithValue("@itemID", itemID);
                     cmdLog.Parameters.AddWithValue("@cr", totalToAdd);
+                    cmdLog.Parameters.AddWithValue("@AddedBy", _currentId);
                     cmdLog.ExecuteNonQuery();
 
                     tran.Commit();

@@ -19,8 +19,8 @@ namespace StoreManager
         private int currentPage = 1;     // current page
         private int totalRecords = 0;    // total rows in table
         private int totalPages = 0;      // total pages
-
-        public frmItems()
+        private int _currentId;
+        public frmItems(int Id)
         {
             InitializeComponent();
             dgvItems.CellClick += dgvItems_CellClick;
@@ -36,6 +36,7 @@ namespace StoreManager
             txtPerCartonQty.LostFocus += txtPerCartonQty_LostFocus;
             btnPrev.Click += btnPrev_Click;
             btnNext.Click += btnNext_Click;
+            _currentId = Id;
 
         }
         private void LoadItemsPage()
@@ -401,10 +402,10 @@ namespace StoreManager
                         SqlCommand cmdItem = new SqlCommand(@"
                     INSERT INTO Items 
                     (Barcode, ItemName, Carton_Quantity, Quantity, Per_Carton_Quantity, Total_Quantity,
-                     Carton_CP, Carton_SP, Quantity_CP, Quantity_SP, Created_at)
+                     Carton_CP, Carton_SP, Quantity_CP, Quantity_SP, Created_at, CreatedBy)
                     VALUES
                     (@Barcode, @ItemName, @CartonQty, @Qty, @PerCartonQty, @TotalQty,
-                     @CartonCP, @CartonSP, @QtyCP, @QtySP, GETDATE());
+                     @CartonCP, @CartonSP, @QtyCP, @QtySP, GETDATE(), @CreatedBy);
 
                     SELECT SCOPE_IDENTITY();
                 ", con, tran);
@@ -419,19 +420,21 @@ namespace StoreManager
                         cmdItem.Parameters.AddWithValue("@CartonSP", txtCartonSP.Text);
                         cmdItem.Parameters.AddWithValue("@QtyCP", txtQtyCP.Text);
                         cmdItem.Parameters.AddWithValue("@QtySP", txtQtySP.Text);
+                        cmdItem.Parameters.AddWithValue("@CreatedBy", _currentId);
 
                         int newItemID = Convert.ToInt32(cmdItem.ExecuteScalar());
 
                         // 🔹 2. LOG INITIAL ENTRY INTO PURCHASED ITEMS
                         SqlCommand cmdLedger = new SqlCommand(@"
                     INSERT INTO PurchasedItems
-                    (ItemID, Cr, Dr, Purchase_Status, Created_At)
+                    (ItemID, Cr, Dr, Purchase_Status, Created_At, AddedBy)
                     VALUES
-                    (@ItemID, @Cr, 0, 'INITIAL_ENTRY', GETDATE())
+                    (@ItemID, @Cr, 0, 'INITIAL_ENTRY', GETDATE(), @AddedBy)
                 ", con, tran);
 
                         cmdLedger.Parameters.AddWithValue("@ItemID", newItemID);
                         cmdLedger.Parameters.AddWithValue("@Cr", totalQty);
+                        cmdLedger.Parameters.AddWithValue("@AddedBy", _currentId);
                         cmdLedger.ExecuteNonQuery();
 
                         tran.Commit();
@@ -450,7 +453,8 @@ namespace StoreManager
                         Carton_SP = @CartonSP,
                         Quantity_CP = @QtyCP,
                         Quantity_SP = @QtySP,
-                        Updated_at = GETDATE()
+                        Updated_at = GETDATE(),
+                        LastUpdatedBy = @LastUpdatedBy
                     WHERE ItemID = @ID
                 ", con, tran);
 
@@ -462,6 +466,7 @@ namespace StoreManager
                         cmdUpdate.Parameters.AddWithValue("@CartonSP", txtCartonSP.Text);
                         cmdUpdate.Parameters.AddWithValue("@QtyCP", txtQtyCP.Text);
                         cmdUpdate.Parameters.AddWithValue("@QtySP", txtQtySP.Text);
+                        cmdUpdate.Parameters.AddWithValue("@LastUpdatedBy", _currentId);
 
                         cmdUpdate.ExecuteNonQuery();
                         tran.Commit();

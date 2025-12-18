@@ -20,8 +20,14 @@ namespace StoreManager
         public frmQuerySale()
         {
             InitializeComponent();
-         
-           
+            dtFrom.ValueChanged += (s, e) => ApplyFiltersAndTotals();
+            dtTo.ValueChanged += (s, e) => ApplyFiltersAndTotals();
+            cmbUsers.SelectedIndexChanged += (s, e) => ApplyFiltersAndTotals();
+            txtCashReceived_ReceiptNo.TextChanged += (s, e) => ApplyFiltersAndTotals();
+
+
+
+
         }
         private DataTable dtSummary;   // store summary table for filtering
 
@@ -55,6 +61,32 @@ namespace StoreManager
             dgvSummary.Columns["Balance"].DefaultCellStyle.Format = "N2";
             dgvSummary.Columns["Date_Sold"].DefaultCellStyle.Format = "yyyy-MM-dd HH:mm";
         }
+        private void LoadUsers()
+        {
+            using (SqlConnection con = DB.GetCon())
+            using (SqlCommand cmd = new SqlCommand(
+                @"SELECT UserID,
+                 Firstname + ' ' + Lastname AS FullName
+          FROM Users
+          ORDER BY Firstname", con))
+            {
+                DataTable dt = new DataTable();
+                con.Open();
+                dt.Load(cmd.ExecuteReader());
+
+                // 🔹 Insert "Select User" at the top
+                DataRow row = dt.NewRow();
+                row["UserID"] = 0;              // fake ID
+                row["FullName"] = "-- Select User --";
+                dt.Rows.InsertAt(row, 0);
+
+                cmbUsers.DataSource = dt;
+                cmbUsers.DisplayMember = "FullName";
+                cmbUsers.ValueMember = "UserID";
+                cmbUsers.SelectedIndex = 0;     // default selection
+            }
+        }
+
 
         private void StyleGrid()
         {
@@ -103,31 +135,7 @@ namespace StoreManager
             // Prevent column text from cutting off
             dgvSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
         }
-
-        private void ApplyFilters()
-        {
-            if (dtSummary == null || dtSummary.Rows.Count == 0)
-                return;
-
-            string search = txtCashReceived_ReceiptNo.Text.Trim().Replace("'", "''");
-
-            string dateFrom = dtFrom.Value.ToString("yyyy-MM-dd 00:00:00");
-            string dateTo = dtTo.Value.ToString("yyyy-MM-dd 23:59:59");
-
-            // base date filter
-            string filter = $"Date_Sold >= '#{dateFrom}#' AND Date_Sold <= '#{dateTo}#'";
-
-            if (!string.IsNullOrEmpty(search))
-            {
-                filter += $" AND (Invoice_No LIKE '%{search}%' " +
-                          $"OR Receipt_No LIKE '%{search}%' " +
-                          $"OR CONVERT(CashReceived, 'System.String') LIKE '%{search}%')";
-            }
-
-            dtSummary.DefaultView.RowFilter = filter;
-        }
-
-
+      
         private void LoadSummary()
         {
             try
@@ -143,7 +151,8 @@ namespace StoreManager
                     Subtotal,
                     CashReceived,
                     Balance,
-                    Date_Sold
+                    Date_Sold,
+                    SoldBy
                 FROM Sales_Summary
                 WHERE Date_Sold >= @start AND Date_Sold <= @end
                 ORDER BY Date_Sold DESC;
@@ -165,6 +174,10 @@ namespace StoreManager
 
 
                     dgvSummary.DataSource = dtSummary;
+                    if (dgvSummary.Columns.Contains("SoldBy"))
+                    {
+                        dgvSummary.Columns["SoldBy"].Visible = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -183,6 +196,7 @@ namespace StoreManager
             dtTo.Value = DateTime.Today;
 
             LoadSummary();
+            LoadUsers();
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -208,21 +222,62 @@ namespace StoreManager
                 PrintReceipt(invoice, receipt);
             }
         }
+        private void ApplyFiltersAndTotals()
+        {
+            if (dtSummary == null) return;
+
+            List<string> filters = new List<string>();
+
+            // DATE FILTER
+            string from = dtFrom.Value.ToString("yyyy-MM-dd 00:00:00");
+            string to = dtTo.Value.ToString("yyyy-MM-dd 23:59:59");
+            filters.Add($"Date_Sold >= '#{from}#' AND Date_Sold <= '#{to}#'");
+
+            // TEXT SEARCH
+            string search = txtCashReceived_ReceiptNo.Text.Trim().Replace("'", "''");
+            if (!string.IsNullOrEmpty(search))
+            {
+                filters.Add(
+                    $"(Invoice_No LIKE '%{search}%' " +
+                    $"OR Receipt_No LIKE '%{search}%')"
+                );
+            }
+
+            // USER FILTER
+            if (cmbUsers.SelectedIndex > 0)
+            {
+                int userId = Convert.ToInt32(cmbUsers.SelectedValue);
+                filters.Add($"SoldBy = {userId}");
+            }
+
+            // APPLY FILTER
+            dtSummary.DefaultView.RowFilter = string.Join(" AND ", filters);
+
+            // ✅ SUM ONLY FILTERED ROWS
+            decimal total = 0m;
+            foreach (DataRowView row in dtSummary.DefaultView)
+            {
+                if (row["Subtotal"] != DBNull.Value)
+                    total += Convert.ToDecimal(row["Subtotal"]);
+            }
+
+            lblTotalSales.Text = total.ToString("N2");
+        }
 
 
         private void txtCashReceived_ReceiptNo_TextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersAndTotals();
         }
 
         private void dtFrom_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersAndTotals();
         }
 
         private void dtTo_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersAndTotals();
         }
         private void PrintReceipt(string invoiceNo, string receiptNo)
         {
@@ -305,7 +360,7 @@ namespace StoreManager
                 string receiptText = BuildReceipt(invoiceNo, cashier, itemsList, subtotal, cashReceived, balance);
 
                 // 4) Send to printer (same printer name used in checkout)
-                string printer = "EPSON TM-T20";
+                string printer = "XP-80C";
                 RawPrinterHelper.SendStringToPrinter(printer, receiptText);
 
                 MessageBox.Show("Receipt reprinted successfully!", "Print", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -318,12 +373,12 @@ namespace StoreManager
 
 
         private string BuildReceipt(
-   string invoiceNo,
-   string cashier,
-   string itemsList,
-   decimal subtotal,
-   decimal cashReceived,
-   decimal balance)
+     string invoiceNo,
+     string cashier,
+     string itemsList,
+     decimal subtotal,
+     decimal cashReceived,
+     decimal balance)
         {
             // ESC/POS COMMANDS
             string ESC = "\x1B";
@@ -343,9 +398,12 @@ namespace StoreManager
 
             // Build text
             string r = "";
+            // Set line spacing and font
+            r += ESC + "!" + "\x00"; // normal font
+            r += ESC + "2";          // default line spacing
 
             // Shop Name
-            r += CENTER + DOUBLE_ON + BOLD_ON + "STORE MANAGER\n";
+            r += CENTER + DOUBLE_ON + BOLD_ON + "Amazing Super Store\n";
             r += DOUBLE_OFF + BOLD_OFF;
             r += CENTER + "No. 12 Main Street, Lagos\n";
             r += CENTER + "Tel: 0800-123-4567\n\n";
@@ -362,25 +420,35 @@ namespace StoreManager
             r += "------------------------------------------\n";
 
             // Subtotal
-            r += RIGHT + $"Subtotal: ₦{subtotal:n2}\n";
+            r += RIGHT + $"Subtotal: NGN{subtotal:n2}\n";
 
             // Amount Paid
-            r += RIGHT + $"Cash: ₦{cashReceived:n2}\n";
+            r += RIGHT + $"Cash: NGN{cashReceived:n2}\n";
 
             // Balance (Double Size)
-            r += DOUBLE_ON + RIGHT + $"Balance: ₦{balance:n2}\n";
+            r += DOUBLE_ON + RIGHT + $"Balance: NGN{balance:n2}\n";
             r += DOUBLE_OFF;
 
             r += "------------------------------------------\n";
             r += CENTER + "Thank you for your purchase!\n";
-            r += CENTER + "Powered by StoreManager POS\n\n\n";
+            r += CENTER + "Powered by Amazing Super Store POS\n\n\n";
 
-            // Auto Cut
-            r += CUT;
+            // --- Reset font & alignment ---
+            r += ESC + "!" + "\x00";   // normal font
+            r += ESC + "a" + "\x01";   // center
+
+
+
+            // --- FEED PAPER (VERY IMPORTANT) ---
+            r += "\n\n\n\n";          // feed 4 lines minimum
+
+            // --- CUT AFTER FEED ---
+            r += ESC + "i";            // full cut
 
             return r;
         }
 
-         
+
+
     }
 }
