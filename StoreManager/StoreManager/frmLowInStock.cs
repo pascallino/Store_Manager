@@ -19,43 +19,53 @@ namespace StoreManager
         {
             InitializeComponent();
         }
+
         private void StyleGrid()
         {
-            // Remove ugly borders
+            // Remove borders + smooth look
             dgvRItems.BorderStyle = BorderStyle.None;
             dgvRItems.CellBorderStyle = DataGridViewCellBorderStyle.SingleHorizontal;
             dgvRItems.RowHeadersVisible = false;
 
-            // Header style
+            // Header Style
             dgvRItems.EnableHeadersVisualStyles = false;
-            dgvRItems.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(30, 144, 255);
+            dgvRItems.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(33, 150, 243);   // Blue
             dgvRItems.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvRItems.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 18, FontStyle.Bold);
-            dgvRItems.ColumnHeadersHeight = 35;
+            dgvRItems.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 12, FontStyle.Bold);
+            dgvRItems.ColumnHeadersDefaultCellStyle.Padding = new Padding(5);
+            dgvRItems.ColumnHeadersHeight = 40;
 
-            // Row style
+            // Row Style
             dgvRItems.DefaultCellStyle.BackColor = Color.White;
             dgvRItems.DefaultCellStyle.ForeColor = Color.Black;
-            dgvRItems.DefaultCellStyle.Font = new Font("Segoe UI", 18);
-            dgvRItems.DefaultCellStyle.SelectionBackColor = Color.FromArgb(224, 240, 255);
+            dgvRItems.DefaultCellStyle.Font = new Font("Segoe UI", 11);
+            dgvRItems.DefaultCellStyle.Padding = new Padding(5);
+            dgvRItems.DefaultCellStyle.SelectionBackColor = Color.FromArgb(225, 240, 255);
             dgvRItems.DefaultCellStyle.SelectionForeColor = Color.Black;
 
             // Alternate row color
             dgvRItems.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 248, 255);
-            dgvRItems.AlternatingRowsDefaultCellStyle.Font = new Font("Segoe UI", 18);
 
-            // Auto-size
-            dgvRItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            // Fit columns to content — BEST LOOK
+            dgvRItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
+
+            // Rows scale with content height
             dgvRItems.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+
+
+
+            // Prevent ugly long-height rows
+            dgvRItems.RowTemplate.Height = 35;
             dgvRItems.AllowUserToResizeRows = false;
 
-            // Full row select
+            // Improve readability
             dgvRItems.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            // Now safe to reset button colors
-          
+            // Smooth scrollbar
+            dgvRItems.ScrollBars = ScrollBars.Both;
 
-
+            // Prevent column text from cutting off
+            dgvRItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
         }
 
         private DataTable dtItems;

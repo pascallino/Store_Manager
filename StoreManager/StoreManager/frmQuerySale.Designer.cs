@@ -47,7 +47,7 @@
             // dtFrom
             // 
             this.dtFrom.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtFrom.Location = new System.Drawing.Point(90, 20);
+            this.dtFrom.Location = new System.Drawing.Point(168, 20);
             this.dtFrom.Name = "dtFrom";
             this.dtFrom.Size = new System.Drawing.Size(394, 38);
             this.dtFrom.TabIndex = 0;
@@ -55,7 +55,7 @@
             // dtTo
             // 
             this.dtTo.Font = new System.Drawing.Font("Segoe UI", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtTo.Location = new System.Drawing.Point(495, 20);
+            this.dtTo.Location = new System.Drawing.Point(573, 20);
             this.dtTo.Name = "dtTo";
             this.dtTo.Size = new System.Drawing.Size(393, 38);
             this.dtTo.TabIndex = 1;
@@ -63,7 +63,7 @@
             // txtCashReceived_ReceiptNo
             // 
             this.txtCashReceived_ReceiptNo.Font = new System.Drawing.Font("Segoe UI", 10.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtCashReceived_ReceiptNo.Location = new System.Drawing.Point(1063, 24);
+            this.txtCashReceived_ReceiptNo.Location = new System.Drawing.Point(1141, 24);
             this.txtCashReceived_ReceiptNo.Name = "txtCashReceived_ReceiptNo";
             this.txtCashReceived_ReceiptNo.Size = new System.Drawing.Size(280, 31);
             this.txtCashReceived_ReceiptNo.TabIndex = 2;
@@ -76,7 +76,7 @@
             this.dgvSummary.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvSummary.Location = new System.Drawing.Point(7, 102);
             this.dgvSummary.Name = "dgvSummary";
-            this.dgvSummary.Size = new System.Drawing.Size(1355, 450);
+            this.dgvSummary.Size = new System.Drawing.Size(1534, 450);
             this.dgvSummary.TabIndex = 4;
             this.dgvSummary.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvSummary_CellContentClick);
             // 
@@ -109,15 +109,16 @@
             this.cmbUsers.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.cmbUsers.ForeColor = System.Drawing.Color.Black;
             this.cmbUsers.FormattingEnabled = true;
-            this.cmbUsers.Location = new System.Drawing.Point(1064, 61);
+            this.cmbUsers.Location = new System.Drawing.Point(1142, 61);
             this.cmbUsers.Name = "cmbUsers";
             this.cmbUsers.Size = new System.Drawing.Size(280, 31);
             this.cmbUsers.TabIndex = 7;
+            this.cmbUsers.SelectedIndexChanged += new System.EventHandler(this.cmbUsers_SelectedIndexChanged);
             // 
             // lblUser
             // 
             this.lblUser.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblUser.Location = new System.Drawing.Point(918, 26);
+            this.lblUser.Location = new System.Drawing.Point(996, 26);
             this.lblUser.Name = "lblUser";
             this.lblUser.Size = new System.Drawing.Size(150, 23);
             this.lblUser.TabIndex = 0;
@@ -127,7 +128,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1371, 609);
+            this.ClientSize = new System.Drawing.Size(1590, 609);
             this.Controls.Add(this.lblUser);
             this.Controls.Add(this.cmbUsers);
             this.Controls.Add(this.labelTotal);

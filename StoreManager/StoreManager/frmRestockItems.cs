@@ -110,7 +110,7 @@ namespace StoreManager
                 dtItems.DefaultView.RowFilter = "";
                 dgvRItems.DataSource = dtItems;
                 // Show total records
-                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count + 1}";
+                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count}";
             }
         }
 

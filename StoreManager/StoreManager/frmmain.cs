@@ -134,12 +134,23 @@ namespace StoreManager
 
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // Close ALL child forms (MDI children, dialogs, etc.)
+            foreach (Form frm in Application.OpenForms.Cast<Form>().ToList())
+            {
+                if (!(frm is frmmain))
+                    frm.Hide();
+            }
+
+            // Hide main form
             this.Hide();
+
+            // Show login
             frmLogin login = new frmLogin();
             login.Show();
-
-
         }
+
+
+
 
         private void newUserToolStripMenuItem_Click(object sender, EventArgs e)
         {

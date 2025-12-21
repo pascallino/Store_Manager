@@ -20,8 +20,11 @@ namespace StoreManager
         public frmQueryPurchase()
         {
             InitializeComponent();
-            btnSearch.Click += btnSearch_Click;
             txtSearchItemName.TextChanged += txtSearchItemName_TextChanged;
+            dtFrom.ValueChanged += dtFrom_ValueChanged;
+            dtTo.ValueChanged += dtTo_ValueChanged;
+            cmbUsers.SelectedIndexChanged += cmbUsers_SelectedIndexChanged;
+             
         }
         private void LoadPurchaseSummary()
         {
@@ -32,18 +35,22 @@ namespace StoreManager
                     con.Open();
 
                     string query = @"
-                SELECT 
-                    i.ItemName,
-                    p.Cr,
-                    p.Dr,
-                    p.Purchase_Status,
-                    p.Created_At
-                FROM PurchasedItems p
-                INNER JOIN Items i ON p.ItemID = i.ItemID
-                WHERE p.Created_At >= @start
-                  AND p.Created_At <= @end
-                ORDER BY p.Created_At DESC;
-            ";
+                                    SELECT 
+                                        i.ItemName,
+                                        p.Cr,
+                                        p.Dr,
+                                        p.Purchase_Status,
+                                        p.Created_At,
+ p.AddedBy as AddedByID,
+                    u.Firstname AS AddedBy
+                                       
+                                    FROM PurchasedItems p
+                      INNER JOIN Users u ON p.AddedBy = u.UserID
+                                    INNER JOIN Items i ON p.ItemID = i.ItemID
+                                    WHERE p.Created_At >= @start
+                                      AND p.Created_At <= @end
+                                    ORDER BY p.Created_At DESC;
+                                ";
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@start", dtFrom.Value.Date);
@@ -54,6 +61,11 @@ namespace StoreManager
                     da.Fill(dtSummary);
 
                     dgvSummary.DataSource = dtSummary;
+                    if (dgvSummary.Columns.Contains("AddedByID"))
+                    {
+                        dgvSummary.Columns["AddedByID"].Visible = false;
+                    }
+
 
                     RecalculateTotal();
                 }
@@ -132,7 +144,7 @@ namespace StoreManager
         {
             dtFrom.Value = DateTime.Today;
             dtTo.Value = DateTime.Today;
-
+            LoadUsers();
             LoadPurchaseSummary();
         }
 
@@ -143,19 +155,82 @@ namespace StoreManager
 
         private void txtSearchItemName_TextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersAndTotals();
         }
 
         private void dtFrom_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            LoadPurchaseSummary();
+            ApplyFiltersAndTotals();
         }
+        private void LoadUsers()
+        {
+            using (SqlConnection con = DB.GetCon())
+            using (SqlCommand cmd = new SqlCommand(
+                @"SELECT UserID,
+                 Firstname + ' ' + Lastname AS FullName
+          FROM Users
+          ORDER BY Firstname", con))
+            {
+                DataTable dt = new DataTable();
+                con.Open();
+                dt.Load(cmd.ExecuteReader());
 
+                // 🔹 Insert "Select User" at the top
+                DataRow row = dt.NewRow();
+                row["UserID"] = 0;              // fake ID
+                row["FullName"] = "-- Select User --";
+                dt.Rows.InsertAt(row, 0);
+
+                cmbUsers.DataSource = dt;
+                cmbUsers.DisplayMember = "FullName";
+                cmbUsers.ValueMember = "UserID";
+                cmbUsers.SelectedIndex = 0;     // default selection
+            }
+        }
+        private void ApplyFiltersAndTotals()
+        {
+            if (dtSummary == null) return;
+
+            List<string> filters = new List<string>();
+
+            // DATE FILTER
+            string from = dtFrom.Value.ToString("yyyy-MM-dd 00:00:00");
+            string to = dtTo.Value.ToString("yyyy-MM-dd 23:59:59");
+            filters.Add($"Created_At >= '#{from}#' AND Created_At <= '#{to}#'");
+
+            // TEXT SEARCH
+            string search = txtSearchItemName.Text.Trim().Replace("'", "''");
+            if (!string.IsNullOrEmpty(search))
+            {
+                filters.Add(
+                    $"ItemName LIKE '%{search}%' " 
+                );
+            }
+
+            // USER FILTER
+            if (cmbUsers.SelectedIndex > 0)
+            {
+                int userId = Convert.ToInt32(cmbUsers.SelectedValue);
+                filters.Add($"AddedByID = {userId}");
+            }
+
+            // APPLY FILTER
+            dtSummary.DefaultView.RowFilter = string.Join(" AND ", filters);
+
+            RecalculateTotal();
+        }
         private void dtTo_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+
+            LoadPurchaseSummary();
+            ApplyFiltersAndTotals();
+            
         }
 
-      
+        private void cmbUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyFiltersAndTotals();
+        }
     }
 }

@@ -71,11 +71,14 @@
             // btnAuthorize
             // 
             this.btnAuthorize.BackColor = System.Drawing.Color.SeaGreen;
-            this.btnAuthorize.Font = new System.Drawing.Font("Times New Roman", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnAuthorize.ForeColor = System.Drawing.Color.AliceBlue;
+            this.btnAuthorize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnAuthorize.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnAuthorize.ForeColor = System.Drawing.Color.White;
+            this.btnAuthorize.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAuthorize.Name = "btnSave";
+            this.btnAuthorize.Size = new System.Drawing.Size(120, 49);
             this.btnAuthorize.Location = new System.Drawing.Point(640, 86);
             this.btnAuthorize.Name = "btnAuthorize";
-            this.btnAuthorize.Size = new System.Drawing.Size(87, 39);
             this.btnAuthorize.TabIndex = 1;
             this.btnAuthorize.Text = "Open";
             this.btnAuthorize.UseVisualStyleBackColor = false;

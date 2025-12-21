@@ -14,9 +14,11 @@ namespace StoreManager
 {
     public partial class frmAdjustQuanity : Form
     {
-        public frmAdjustQuanity()
+        private int _currentId;
+        public frmAdjustQuanity(int id)
         {
             InitializeComponent();
+            _currentId = id;
             dgvA.CellClick += dgvA_CellClick;
             dgvA.CellContentClick += dgvA_CellClick;
             dgvA.CellMouseEnter += dgvA_CellMouseEnter;
@@ -108,7 +110,7 @@ namespace StoreManager
                 dtItems.DefaultView.RowFilter = "";
                 dgvA.DataSource = dtItems;
                 // Show total records
-                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count + 1}";
+                lblPageInfo.Text = $"Total Products: {dtItems.Rows.Count}";
             }
         }
 
@@ -227,14 +229,15 @@ namespace StoreManager
                     // 4️⃣ Log into PurchasedItems
                     SqlCommand cmdLog = new SqlCommand(@"
                 INSERT INTO PurchasedItems
-                (ItemID, Cr, Dr, Purchase_Status)
+                (ItemID, Cr, Dr, Purchase_Status, AddedBy)
                 VALUES
-                (@itemID, @cr, @dr, 'Adjustment')
+                (@itemID, @cr, @dr, 'Adjustment', @AddedBy )
             ", con, tran);
 
                     cmdLog.Parameters.AddWithValue("@itemID", itemID);
                     cmdLog.Parameters.AddWithValue("@cr", cr);
                     cmdLog.Parameters.AddWithValue("@dr", dr);
+                    cmdLog.Parameters.AddWithValue("@AddedBy", _currentId);
                     cmdLog.ExecuteNonQuery();
 
                     tran.Commit();

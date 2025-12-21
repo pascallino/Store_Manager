@@ -17,7 +17,6 @@
         private System.Windows.Forms.DateTimePicker dtFrom;
         private System.Windows.Forms.DateTimePicker dtTo;
         private System.Windows.Forms.DataGridView dgvSummary;
-        private System.Windows.Forms.Button btnSearch;
         private System.Windows.Forms.Label labelTotal;
         private System.Windows.Forms.Label lblTotalItems;
 
@@ -25,8 +24,9 @@
         {
             this.dtFrom = new System.Windows.Forms.DateTimePicker();
             this.dtTo = new System.Windows.Forms.DateTimePicker();
+            this.lblUser = new System.Windows.Forms.Label();
+            this.cmbUsers = new System.Windows.Forms.ComboBox();
             this.txtSearchItemName = new System.Windows.Forms.TextBox();
-            this.btnSearch = new System.Windows.Forms.Button();
             this.dgvSummary = new System.Windows.Forms.DataGridView();
             this.labelTotal = new System.Windows.Forms.Label();
             this.lblTotalItems = new System.Windows.Forms.Label();
@@ -49,23 +49,36 @@
             this.dtTo.Size = new System.Drawing.Size(393, 38);
             this.dtTo.TabIndex = 3;
             // 
+            // lblUser
+            // 
+            this.lblUser.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblUser.Location = new System.Drawing.Point(970, 26);
+            this.lblUser.Name = "lblUser";
+            this.lblUser.Size = new System.Drawing.Size(91, 23);
+            this.lblUser.TabIndex = 0;
+            this.lblUser.Text = "Item Name";
+            // 
+            // cmbUsers
+            // 
+            this.cmbUsers.BackColor = System.Drawing.Color.White;
+            this.cmbUsers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbUsers.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cmbUsers.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cmbUsers.ForeColor = System.Drawing.Color.Black;
+            this.cmbUsers.FormattingEnabled = true;
+            this.cmbUsers.Location = new System.Drawing.Point(1064, 61);
+            this.cmbUsers.Name = "cmbUsers";
+            this.cmbUsers.Size = new System.Drawing.Size(280, 31);
+            this.cmbUsers.TabIndex = 7;
+            this.cmbUsers.SelectedIndexChanged += new System.EventHandler(this.cmbUsers_SelectedIndexChanged);
+            // 
             // txtSearchItemName
             // 
             this.txtSearchItemName.Font = new System.Drawing.Font("Segoe UI", 10.8F);
-            this.txtSearchItemName.Location = new System.Drawing.Point(895, 24);
+            this.txtSearchItemName.Location = new System.Drawing.Point(1062, 24);
             this.txtSearchItemName.Name = "txtSearchItemName";
             this.txtSearchItemName.Size = new System.Drawing.Size(280, 31);
             this.txtSearchItemName.TabIndex = 4;
-            // 
-            // btnSearch
-            // 
-            this.btnSearch.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.btnSearch.Location = new System.Drawing.Point(1181, 18);
-            this.btnSearch.Name = "btnSearch";
-            this.btnSearch.Size = new System.Drawing.Size(100, 40);
-            this.btnSearch.TabIndex = 5;
-            this.btnSearch.Text = "Search";
-            this.btnSearch.Click += new System.EventHandler(this.btnSearch_Click);
             // 
             // dgvSummary
             // 
@@ -92,7 +105,7 @@
             this.lblTotalItems.AutoSize = true;
             this.lblTotalItems.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             this.lblTotalItems.ForeColor = System.Drawing.Color.Green;
-            this.lblTotalItems.Location = new System.Drawing.Point(760, 559);
+            this.lblTotalItems.Location = new System.Drawing.Point(773, 559);
             this.lblTotalItems.Name = "lblTotalItems";
             this.lblTotalItems.Size = new System.Drawing.Size(35, 41);
             this.lblTotalItems.TabIndex = 1;
@@ -103,10 +116,11 @@
             this.ClientSize = new System.Drawing.Size(1371, 609);
             this.Controls.Add(this.labelTotal);
             this.Controls.Add(this.lblTotalItems);
+            this.Controls.Add(this.lblUser);
+            this.Controls.Add(this.cmbUsers);
             this.Controls.Add(this.dtFrom);
             this.Controls.Add(this.dtTo);
             this.Controls.Add(this.txtSearchItemName);
-            this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.dgvSummary);
             this.Name = "frmQuerySalesItems";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -119,5 +133,7 @@
         }
 
         #endregion
+        private System.Windows.Forms.ComboBox cmbUsers;
+        private System.Windows.Forms.Label lblUser;
     }
 }

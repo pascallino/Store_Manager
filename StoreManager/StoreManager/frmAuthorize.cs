@@ -76,9 +76,9 @@ namespace StoreManager
                 frmUser u = new frmUser(adminUserId);
                 u.ShowDialog();
             }
-            else
+            else if (checkform == "adjust")
             {
-                frmAdjustQuanity adjustQ = new frmAdjustQuanity();
+                frmAdjustQuanity adjustQ = new frmAdjustQuanity(adminUserId);
                 adjustQ.ShowDialog();
             }
 

@@ -20,10 +20,10 @@ namespace StoreManager
         public frmQuerySale()
         {
             InitializeComponent();
-            dtFrom.ValueChanged += (s, e) => ApplyFiltersAndTotals();
-            dtTo.ValueChanged += (s, e) => ApplyFiltersAndTotals();
-            cmbUsers.SelectedIndexChanged += (s, e) => ApplyFiltersAndTotals();
-            txtCashReceived_ReceiptNo.TextChanged += (s, e) => ApplyFiltersAndTotals();
+            dtFrom.ValueChanged += dtFrom_ValueChanged;
+            dtTo.ValueChanged += dtTo_ValueChanged;
+            cmbUsers.SelectedIndexChanged += cmbUsers_SelectedIndexChanged;
+            txtCashReceived_ReceiptNo.TextChanged += txtCashReceived_ReceiptNo_TextChanged;
 
 
 
@@ -145,18 +145,22 @@ namespace StoreManager
                     con.Open();
 
                     string query = @"
-                SELECT 
-                    Invoice_No,
-                    Receipt_No,
-                    Subtotal,
-                    CashReceived,
-                    Balance,
-                    Date_Sold,
-                    SoldBy
-                FROM Sales_Summary
-                WHERE Date_Sold >= @start AND Date_Sold <= @end
-                ORDER BY Date_Sold DESC;
-            ";
+                                    SELECT
+                                        s.Invoice_No,
+                                        s.Receipt_No,
+                                        s.Subtotal,
+                                        s.CashReceived,
+                                        s.Balance,
+                                        s.Date_Sold,
+                                        s.SoldBy AS SoldByID,
+                                        u.Firstname AS SoldBy
+                                    FROM Sales_Summary S
+                                    INNER JOIN Users u ON s.SoldBy = u.UserID
+                                    WHERE s.Date_Sold >= @start
+                                      AND s.Date_Sold <= @end
+                                    ORDER BY s.Date_Sold DESC";
+
+                
 
                     SqlCommand cmd = new SqlCommand(query, con);
                     cmd.Parameters.AddWithValue("@start", dtFrom.Value.Date);
@@ -174,10 +178,7 @@ namespace StoreManager
 
 
                     dgvSummary.DataSource = dtSummary;
-                    if (dgvSummary.Columns.Contains("SoldBy"))
-                    {
-                        dgvSummary.Columns["SoldBy"].Visible = false;
-                    }
+                   
                 }
             }
             catch (Exception ex)
@@ -247,7 +248,7 @@ namespace StoreManager
             if (cmbUsers.SelectedIndex > 0)
             {
                 int userId = Convert.ToInt32(cmbUsers.SelectedValue);
-                filters.Add($"SoldBy = {userId}");
+                filters.Add($"SoldByID = {userId}");
             }
 
             // APPLY FILTER
@@ -272,11 +273,13 @@ namespace StoreManager
 
         private void dtFrom_ValueChanged(object sender, EventArgs e)
         {
+            LoadSummary();
             ApplyFiltersAndTotals();
         }
 
         private void dtTo_ValueChanged(object sender, EventArgs e)
         {
+            LoadSummary();
             ApplyFiltersAndTotals();
         }
         private void PrintReceipt(string invoiceNo, string receiptNo)
@@ -448,7 +451,10 @@ namespace StoreManager
             return r;
         }
 
-
-
+        private void cmbUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            
+            ApplyFiltersAndTotals();
+        }
     }
 }

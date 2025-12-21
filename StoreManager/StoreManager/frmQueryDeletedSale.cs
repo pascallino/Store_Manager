@@ -21,6 +21,7 @@ namespace StoreManager
         {
             InitializeComponent();
             dgvSummary.CellContentClick += dgvSummary_CellContentClick;
+            
         }
         private DataTable dtSummary;   // store summary table for filtering
 
@@ -93,29 +94,74 @@ namespace StoreManager
             dgvSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
         }
 
-        private void ApplyFilters()
+        private void ApplyFiltersAndTotals()
         {
-            if (dtSummary == null || dtSummary.Rows.Count == 0)
-                return;
+            if (dtSummary == null) return;
 
+            List<string> filters = new List<string>();
+
+            // DATE FILTER
+            string from = dtFrom.Value.ToString("yyyy-MM-dd 00:00:00");
+            string to = dtTo.Value.ToString("yyyy-MM-dd 23:59:59");
+            filters.Add($"DeletedAt >= '#{from}#' AND DeletedAt <= '#{to}#'");
+
+            // TEXT SEARCH
             string search = txtCashReceived_ReceiptNo.Text.Trim().Replace("'", "''");
-
-            string dateFrom = dtFrom.Value.ToString("yyyy-MM-dd 00:00:00");
-            string dateTo = dtTo.Value.ToString("yyyy-MM-dd 23:59:59");
-
-            // base date filter
-            string filter = $"DeletedAt >= '#{dateFrom}#' AND DeletedAt <= '#{dateTo}#'";
-
             if (!string.IsNullOrEmpty(search))
             {
-                filter += $" AND (Invoice_No LIKE '%{search}%' " +
-                          $"OR Receipt_No LIKE '%{search}%' " +
-                          $"OR CONVERT(CashReceived, 'System.String') LIKE '%{search}%')";
+                filters.Add(
+                    $"(Invoice_No LIKE '%{search}%' " +
+                    $"OR Receipt_No LIKE '%{search}%')"
+                );
             }
 
-            dtSummary.DefaultView.RowFilter = filter;
-        }
+            // USER FILTER
+            if (cmbUsers.SelectedIndex > 0)
+            {
+                int userId = Convert.ToInt32(cmbUsers.SelectedValue);
+                filters.Add($"DeletedBy = {userId}");
+            }
 
+            // APPLY FILTER
+            dtSummary.DefaultView.RowFilter = string.Join(" AND ", filters);
+
+            // ✅ SUM ONLY FILTERED ROWS
+            decimal total = 0m;
+            foreach (DataRowView row in dtSummary.DefaultView)
+            {
+                if (row["Subtotal"] != DBNull.Value)
+                    total += Convert.ToDecimal(row["Subtotal"]);
+            }
+
+            lblTotalSales.Text = total.ToString("N2");
+
+
+        }
+        private void LoadUsers()
+        {
+            using (SqlConnection con = DB.GetCon())
+            using (SqlCommand cmd = new SqlCommand(
+                @"SELECT UserID,
+                 Firstname + ' ' + Lastname AS FullName
+          FROM Users
+          ORDER BY Firstname", con))
+            {
+                DataTable dt = new DataTable();
+                con.Open();
+                dt.Load(cmd.ExecuteReader());
+
+                // 🔹 Insert "Select User" at the top
+                DataRow row = dt.NewRow();
+                row["UserID"] = 0;              // fake ID
+                row["FullName"] = "-- Select User --";
+                dt.Rows.InsertAt(row, 0);
+
+                cmbUsers.DataSource = dt;
+                cmbUsers.DisplayMember = "FullName";
+                cmbUsers.ValueMember = "UserID";
+                cmbUsers.SelectedIndex = 0;     // default selection
+            }
+        }
 
         private void LoadSummary()
         {
@@ -132,7 +178,8 @@ namespace StoreManager
                     Subtotal,
                     CashReceived,
                     Balance,
-                    DeletedAt
+                    DeletedAt,
+                    DeletedBy
                 FROM DeletedSales
                 WHERE DeletedAt >= @start AND DeletedAt <= @end
                 ORDER BY DeletedAt DESC;
@@ -154,6 +201,10 @@ namespace StoreManager
 
 
                     dgvSummary.DataSource = dtSummary;
+                    if (dgvSummary.Columns.Contains("DeletedBy"))
+                    {
+                        dgvSummary.Columns["DeletedBy"].Visible = false;
+                    }
                 }
             }
             catch (Exception ex)
@@ -172,6 +223,7 @@ namespace StoreManager
             dtTo.Value = DateTime.Today;
 
             LoadSummary();
+            LoadUsers();
         }
 
         private void btnSearch_Click(object sender, EventArgs e)
@@ -197,19 +249,31 @@ namespace StoreManager
 
         private void txtCashReceived_ReceiptNo_TextChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            ApplyFiltersAndTotals();
         }
 
         private void dtFrom_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            LoadSummary();
+            ApplyFiltersAndTotals();
         }
 
         private void dtTo_ValueChanged(object sender, EventArgs e)
         {
-            ApplyFilters();
+            LoadSummary();
+            ApplyFiltersAndTotals();
         }
 
+        private void cmbUsers_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ApplyFiltersAndTotals();
+        }
 
+        private void dtTo_ValueChanged_1(object sender, EventArgs e)
+        {
+
+        }
+
+       
     }
 }
