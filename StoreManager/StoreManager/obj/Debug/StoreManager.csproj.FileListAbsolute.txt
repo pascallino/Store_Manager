@@ -1,7 +1,6 @@
 c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.exe.config
 c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.exe
 c:\users\hp\source\repos\StoreManager\StoreManager\bin\Debug\StoreManager.pdb
-c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csprojAssemblyReference.cache
 c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.Properties.Resources.resources
 c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csproj.GenerateResource.cache
 c:\users\hp\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csproj.CoreCompileInputs.cache

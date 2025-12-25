@@ -24,7 +24,7 @@ namespace StoreManager
         {
             InitializeComponent();
             dgvItems.CellClick += dgvItems_CellClick;
-            dgvItems.CellContentClick += dgvItems_CellClick;
+         
             dgvItems.CellMouseEnter += dgvItems_CellMouseEnter;
             dgvItems.CellMouseLeave += dgvItems_CellMouseLeave;
             txtCartonQty.LostFocus += txtCartonQty_LostFocus;
@@ -250,6 +250,7 @@ namespace StoreManager
 
             // Set focus if you want
             txtItemName.Focus();
+            txtItemID.Text = "";
         }
 
 
@@ -284,7 +285,7 @@ namespace StoreManager
         }
 
 
-        private void DeleteItem(string id)
+        private void DeleteItem(string itemId)
         {
             try
             {
@@ -292,10 +293,56 @@ namespace StoreManager
                 {
                     con.Open();
 
-                    string query = "DELETE FROM Items WHERE ItemID = @id";
-                    SqlCommand cmd = new SqlCommand(query, con);
-                    cmd.Parameters.AddWithValue("@id", id);
-                    cmd.ExecuteNonQuery();
+                    // 1️⃣ Check if item exists in Sales
+                    string salesCheckQuery = @"
+                SELECT COUNT(1)
+                FROM Sales
+                WHERE ItemID = @ItemID";
+
+                    using (SqlCommand checkCmd = new SqlCommand(salesCheckQuery, con))
+                    {
+                        checkCmd.Parameters.AddWithValue("@ItemID", itemId);
+
+                        int salesCount = Convert.ToInt32(checkCmd.ExecuteScalar());
+
+                        if (salesCount > 0)
+                        {
+                            MessageBox.Show(
+                                "This item cannot be deleted.\nIt already has sales records.",
+                                "Delete Blocked",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                            return;
+                        }
+                    }
+
+                    // 2️⃣ Delete ALL purchase history for the item
+                    string deletePurchasesQuery = @"
+                DELETE FROM PurchasedItems
+                WHERE ItemID = @ItemID";
+
+                    using (SqlCommand deletePurchasesCmd = new SqlCommand(deletePurchasesQuery, con))
+                    {
+                        deletePurchasesCmd.Parameters.AddWithValue("@ItemID", itemId);
+                        deletePurchasesCmd.ExecuteNonQuery();
+                    }
+
+                    // 3️⃣ Delete item itself
+                    string deleteItemQuery = @"
+                DELETE FROM Items
+                WHERE ItemID = @ItemID";
+
+                    using (SqlCommand deleteItemCmd = new SqlCommand(deleteItemQuery, con))
+                    {
+                        deleteItemCmd.Parameters.AddWithValue("@ItemID", itemId);
+                        deleteItemCmd.ExecuteNonQuery();
+                    }
+
+                    MessageBox.Show(
+                        "Item and all related purchase records deleted successfully.",
+                        "Delete Successful",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
@@ -303,6 +350,8 @@ namespace StoreManager
                 MessageBox.Show("Delete failed: " + ex.Message);
             }
         }
+
+
 
         private void label1_Click(object sender, EventArgs e)
         {

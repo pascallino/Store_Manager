@@ -401,7 +401,7 @@
             this.dgvItems.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvItems.Size = new System.Drawing.Size(816, 571);
             this.dgvItems.TabIndex = 4;
-            this.dgvItems.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvItems_CellClick);
+         
             // 
             // lblPageInfo
             // 

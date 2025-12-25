@@ -18,6 +18,7 @@ namespace StoreManager
         {
        
             InitializeComponent();
+            this.Resize += frmmain_Resize;
             _currentUser = u;
             _currentId = id;
 
@@ -37,7 +38,13 @@ namespace StoreManager
 
 
         }
-
+        private void frmmain_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState != FormWindowState.Maximized)
+            {
+                this.WindowState = FormWindowState.Maximized;
+            }
+        }
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
