@@ -45,9 +45,9 @@
             this.menuSearchSales = new System.Windows.Forms.ToolStripMenuItem();
             this.menuPurchaseRrcords = new System.Windows.Forms.ToolStripMenuItem();
             this.menuSoldItems = new System.Windows.Forms.ToolStripMenuItem();
+            this.newUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newUserToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -185,6 +185,13 @@
             this.menuSoldItems.Text = "Sold Items Records";
             this.menuSoldItems.Click += new System.EventHandler(this.menuSoldItems_Click);
             // 
+            // newUserToolStripMenuItem
+            // 
+            this.newUserToolStripMenuItem.Name = "newUserToolStripMenuItem";
+            this.newUserToolStripMenuItem.Size = new System.Drawing.Size(129, 36);
+            this.newUserToolStripMenuItem.Text = "New User";
+            this.newUserToolStripMenuItem.Click += new System.EventHandler(this.newUserToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -196,15 +203,9 @@
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(161, 36);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(216, 36);
             this.aboutToolStripMenuItem.Text = "About";
-            // 
-            // newUserToolStripMenuItem
-            // 
-            this.newUserToolStripMenuItem.Name = "newUserToolStripMenuItem";
-            this.newUserToolStripMenuItem.Size = new System.Drawing.Size(129, 36);
-            this.newUserToolStripMenuItem.Text = "New User";
-            this.newUserToolStripMenuItem.Click += new System.EventHandler(this.newUserToolStripMenuItem_Click);
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // frmmain
             // 

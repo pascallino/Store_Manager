@@ -164,5 +164,13 @@ namespace StoreManager
             frmAuthorize a = new frmAuthorize("user");
             a.ShowDialog();
         }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (frmAbout about = new frmAbout())
+            {
+                about.ShowDialog(this);
+            }
+        }
     }
 }

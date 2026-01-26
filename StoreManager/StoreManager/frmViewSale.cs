@@ -32,12 +32,12 @@ namespace StoreManager
                 SELECT 
                     i.ItemName,
                     s.Carton_Qty,
-                    i.Carton_SP AS CartonPrice,
+                    s.Carton_SP AS CartonPrice,
                     s.Units,
-                    i.Quantity_SP AS UnitPrice,
+                    s.Unit_SP AS UnitPrice,
                     s.Subtotal
-                FROM {table}  s
-                JOIN Items i ON s.ItemID = i.ItemID
+                FROM {table}  s  
+                join Items i ON i.ItemID = s.ItemID  
                 WHERE s.Invoice_No = @inv AND s.Receipt_No = @rec
             ";
 

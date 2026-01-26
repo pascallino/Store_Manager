@@ -135,7 +135,39 @@ namespace StoreManager
             // Prevent column text from cutting off
             dgvSummary.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.EnableResizing;
         }
-      
+        private string GetUserFullName(int userId)
+        {
+            try
+            {
+                using (SqlConnection con = DB.GetCon())
+                {
+                    con.Open();
+
+                    string query = @"
+                SELECT 
+                    Firstname + ' ' + Lastname 
+                FROM Users
+                WHERE UserID = @id";
+
+                    using (SqlCommand cmd = new SqlCommand(query, con))
+                    {
+                        cmd.Parameters.AddWithValue("@id", userId);
+
+                        object result = cmd.ExecuteScalar();
+
+                        if (result != null && result != DBNull.Value)
+                            return result.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error fetching user name: " + ex.Message);
+            }
+
+            return "Admin"; // fallback
+        }
+
         private void LoadSummary()
         {
             try
@@ -178,7 +210,11 @@ namespace StoreManager
 
 
                     dgvSummary.DataSource = dtSummary;
-                   
+                    if (dgvSummary.Columns.Contains("SoldByID"))
+                    {
+                        dgvSummary.Columns["SoldByID"].Visible = false;
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -299,7 +335,7 @@ namespace StoreManager
                     // Query sales lines + item prices
                     string qLines = @"
                 SELECT s.ItemID, i.ItemName, s.Carton_Qty, s.Units, s.Total_Qty, 
-                       i.Carton_SP AS CartonPrice, i.Quantity_SP AS UnitPrice,
+                       s.Carton_SP AS CartonPrice, s.Unit_SP AS UnitPrice,
                        s.Subtotal AS LineTotal
                 FROM Sales s
                 JOIN Items i ON s.ItemID = i.ItemID
@@ -327,7 +363,7 @@ namespace StoreManager
                                     : Convert.ToDecimal(dr["LineTotal"]);
 
                                 // Keep same formatting as checkout
-                                itemsList += $"{name,-18} x{totalUnits,-4} ₦{lineTotal,10:n2}\n";
+                                itemsList += $"{name,-18} x{totalUnits,-4} NGN{lineTotal,10:n2}\n";
 
                                 subtotal += lineTotal; // accumulate in case summary lookup fails
                             }
@@ -359,7 +395,7 @@ namespace StoreManager
                 } // using con
 
                 // 3) Build receipt text using the same BuildReceipt method you use in checkout
-                string cashier = "Admin"; // or pull logged-in user if you have one
+                string cashier = Sessiion.FullName; // or pull logged-in user if you have one
                 string receiptText = BuildReceipt(invoiceNo, cashier, itemsList, subtotal, cashReceived, balance);
 
                 // 4) Send to printer (same printer name used in checkout)
@@ -408,8 +444,11 @@ namespace StoreManager
             // Shop Name
             r += CENTER + DOUBLE_ON + BOLD_ON + "Amazing Super Store\n";
             r += DOUBLE_OFF + BOLD_OFF;
-            r += CENTER + "No. 12 Main Street, Lagos\n";
-            r += CENTER + "Tel: 0800-123-4567\n\n";
+            r += CENTER + "Block 297 Abesan estate, akinyele bustop\n";
+            r += CENTER + "Ipaja lagos\n";
+            r += CENTER + "Tel: +2349112476966, +2349016829957 \n\n";
+            //r += CENTER + "No. 12 Main Street, Lagos\n";
+            //r += CENTER + "Tel: 0800-123-4567\n\n";
 
             // Invoice Info
             r += LEFT;

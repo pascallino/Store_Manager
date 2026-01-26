@@ -74,11 +74,10 @@
             this.btnAuthorize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnAuthorize.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnAuthorize.ForeColor = System.Drawing.Color.White;
-            this.btnAuthorize.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.btnAuthorize.Name = "btnSave";
-            this.btnAuthorize.Size = new System.Drawing.Size(120, 49);
             this.btnAuthorize.Location = new System.Drawing.Point(640, 86);
+            this.btnAuthorize.Margin = new System.Windows.Forms.Padding(4);
             this.btnAuthorize.Name = "btnAuthorize";
+            this.btnAuthorize.Size = new System.Drawing.Size(120, 49);
             this.btnAuthorize.TabIndex = 1;
             this.btnAuthorize.Text = "Open";
             this.btnAuthorize.UseVisualStyleBackColor = false;
@@ -117,6 +116,7 @@
             this.Controls.Add(this.label11);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;

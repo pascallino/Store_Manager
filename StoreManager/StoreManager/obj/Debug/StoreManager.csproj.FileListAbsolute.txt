@@ -21,3 +21,5 @@ C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQue
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmQuerySalesItems.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmLogin.resources
 C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmUser.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.frmAbout.resources
+C:\Users\HP\source\repos\StoreManager\StoreManager\obj\Debug\StoreManager.csprojAssemblyReference.cache

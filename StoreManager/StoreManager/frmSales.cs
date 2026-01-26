@@ -91,6 +91,26 @@ namespace StoreManager
             UpdateGrandTotal();
         }
 
+        private bool IsCurrentUserAdmin()
+        {
+            using (SqlConnection con = DB.GetCon()) // or GetCon()
+            using (SqlCommand cmd = new SqlCommand(
+                "SELECT UserType FROM Users WHERE UserID = @ID", con))
+            {
+                cmd.Parameters.AddWithValue("@ID", _currentId);
+
+                con.Open();
+                object result = cmd.ExecuteScalar();
+
+                if (result == null || result == DBNull.Value)
+                    return false;
+
+                string userType = result.ToString().Trim();
+                return userType == "Admin";
+            }
+        }
+
+
         // ---------- Grid setup ----------
         private void SetupCartGrid()
         {
@@ -129,7 +149,16 @@ namespace StoreManager
             DataGridViewTextBoxColumn priceCol = new DataGridViewTextBoxColumn();
             priceCol.Name = "UnitPrice";
             priceCol.HeaderText = "Unit price";
-            priceCol.ReadOnly = true;
+            MessageBox.Show(IsCurrentUserAdmin().ToString());
+            MessageBox.Show(_currentId.ToString());
+            if (IsCurrentUserAdmin())
+            {
+                priceCol.ReadOnly = false;
+            }
+            else
+            {
+                priceCol.ReadOnly = true;
+            }
             priceCol.DefaultCellStyle.Format = "N2";
             priceCol.Width = 80;
             dgvCart.Columns.Add(priceCol);
@@ -145,7 +174,14 @@ namespace StoreManager
             DataGridViewTextBoxColumn cartonPriceCol = new DataGridViewTextBoxColumn();
             cartonPriceCol.Name = "CartonPrice";
             cartonPriceCol.HeaderText = "Carton Price";
-            cartonPriceCol.ReadOnly = true;
+            if (IsCurrentUserAdmin())
+            {
+                cartonPriceCol.ReadOnly = false;
+            }
+            else
+            {
+                cartonPriceCol.ReadOnly = true;
+            }
             cartonPriceCol.DefaultCellStyle.Format = "N2";
             cartonPriceCol.Width = 80;
             dgvCart.Columns.Add(cartonPriceCol);
@@ -254,6 +290,7 @@ namespace StoreManager
                                 }
 
                                 AddItemToCart(itemId, name, barcode, unitPrice, perCarton, cartonPrice);
+                                txtSearch.Text = "";
                             }
                             else
                             {
@@ -417,6 +454,7 @@ namespace StoreManager
             }
 
             lblGrandTotal.Text = grand.ToString("N2");
+            lblGrandTotal2.Text = grand.ToString("N2");
         }
 
 
@@ -513,7 +551,12 @@ namespace StoreManager
             if (e.RowIndex < 0) return;
 
             string colName = dgvCart.Columns[e.ColumnIndex].Name;
-            if (colName != "CartonQty" && colName != "UnitQty") return;
+            // 🔑 Trigger on qty OR price change
+            if (colName != "CartonQty" &&
+                colName != "UnitQty" &&
+                colName != "UnitPrice" &&
+                colName != "CartonPrice")
+                return;
 
             DataGridViewRow row = dgvCart.Rows[e.RowIndex];
 
@@ -812,14 +855,16 @@ namespace StoreManager
 
                             // SAVE TO DB
                             SqlCommand cmd = new SqlCommand(@"
-                        INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold, SoldBy)
-                        VALUES (@inv, @rcp, @item, @carton, @units, @totalqty,  @subtotal, @cash, @bal, GETDATE(), @SoldBy)", con, tran);
+                        INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Carton_Sp, Units, Unit_Sp, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold, SoldBy)
+                        VALUES (@inv, @rcp, @item, @carton, @carton_sp, @units, @units_sp, @totalqty,  @subtotal, @cash, @bal, GETDATE(), @SoldBy)", con, tran);
 
                             cmd.Parameters.AddWithValue("@inv", invoiceNo);
                             cmd.Parameters.AddWithValue("@rcp", receiptNo);
                             cmd.Parameters.AddWithValue("@item", itemId);
                             cmd.Parameters.AddWithValue("@carton", cartons);
+                            cmd.Parameters.AddWithValue("@carton_sp", cartonPrice);
                             cmd.Parameters.AddWithValue("@units", units);
+                            cmd.Parameters.AddWithValue("@units_sp", unitPrice);
                             cmd.Parameters.AddWithValue("@totalqty", totalUnits);
                             cmd.Parameters.AddWithValue("@subtotal", lineTotal);
                             cmd.Parameters.AddWithValue("@cash", cashReceived);
@@ -877,10 +922,11 @@ namespace StoreManager
 
             // Update UI
             lblGrandTotal.Text = subtotal.ToString("N2");
+            lblGrandTotal2.Text = subtotal.ToString("N2");
             lblBalance.Text = balance.ToString("N2");
 
             // ---- PRINT RECEIPT ----
-            string cashier = "Admin"; // OR your logged in user
+            string cashier = Sessiion.FullName; // OR your logged in user
             string receiptText = BuildReceipt(
                 invoiceNo,
                 cashier,
@@ -909,6 +955,7 @@ namespace StoreManager
             if (!string.IsNullOrEmpty(s))
             {
                 LoadItemBySearch(s);
+                
             }
         }
         private void txtCashReceived_TextChanged(object sender, EventArgs e)
@@ -955,8 +1002,9 @@ namespace StoreManager
             // Shop Name
             r += CENTER + DOUBLE_ON + BOLD_ON + "Amazing Super Store\n";
             r += DOUBLE_OFF + BOLD_OFF;
-            r += CENTER + "No. 12 Main Street, Lagos\n";
-            r += CENTER + "Tel: 0800-123-4567\n\n";
+            r += CENTER + "Block 297 Abesan estate, akinyele bustop\n";
+            r += CENTER + "Ipaja lagos\n";
+            r += CENTER + "Tel: +2349112476966, +2349016829957 \n\n";
 
             // Invoice Info
             r += LEFT;
@@ -1089,6 +1137,7 @@ namespace StoreManager
                     btnUpdateTransaction.Visible = false;
                     txtSearch_recipt_invoice.Text = "";
                     lblGrandTotal.Text = "0.00";
+                    lblGrandTotal2.Text = "0.00";
                     lblBalance.Text = "Balance: 0.00";
                     txtCashReceived.Text = ""; ;
                     UpdateGrandTotal();
@@ -1162,7 +1211,7 @@ namespace StoreManager
 
                     string query = @"
                 SELECT s.ItemID, i.ItemName, s.Carton_Qty, s.Units, s.Total_Qty, 
-                       i.Quantity_SP AS UnitPrice, i.Carton_SP AS CartonPrice, i.Per_Carton_Quantity,
+                       s.Unit_SP AS UnitPrice, s.Carton_SP AS CartonPrice, i.Per_Carton_Quantity,
                        s.Invoice_No, s.Receipt_No, s.Cash_Received, s.SaleID
                 FROM Sales s
                 JOIN Items i ON s.ItemID = i.ItemID
@@ -1303,15 +1352,17 @@ namespace StoreManager
 
                         // Insert into Sales table
                         SqlCommand cmdInsert = new SqlCommand(@"
-                    INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Units, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold, SoldBy)
-                    VALUES (@inv, @rcp, @item, @carton, @units, @totalqty, @subtotal, @cash, @bal, GETDATE(), @SoldBy)
+                    INSERT INTO Sales (Invoice_No, Receipt_No, ItemID, Carton_Qty, Carton_Sp, Units, Unit_Sp, Total_Qty, Subtotal, Cash_Received, Balance, Date_Sold, SoldBy)
+                    VALUES (@inv, @rcp, @item, @carton, @carton_sp, @units, @units_sp, @totalqty, @subtotal, @cash, @bal, GETDATE(), @SoldBy)
                 ", con, tran);
 
                         cmdInsert.Parameters.AddWithValue("@inv", txtSearch_recipt_invoice.Tag.ToString());
                         cmdInsert.Parameters.AddWithValue("@rcp", txtSearch_recipt_invoice.Text.Trim());
                         cmdInsert.Parameters.AddWithValue("@item", itemId);
                         cmdInsert.Parameters.AddWithValue("@carton", cartons);
+                        cmdInsert.Parameters.AddWithValue("@carton_sp", cartonPrice);
                         cmdInsert.Parameters.AddWithValue("@units", units);
+                        cmdInsert.Parameters.AddWithValue("@units_sp", unitPrice);
                         cmdInsert.Parameters.AddWithValue("@totalqty", totalUnits);
                         cmdInsert.Parameters.AddWithValue("@subtotal", lineTotal);
                         cmdInsert.Parameters.AddWithValue("@cash", cashReceived);
@@ -1351,6 +1402,7 @@ namespace StoreManager
                     btnUpdateTransaction.Visible = false;
                     txtSearch_recipt_invoice.Text = "";
                     lblGrandTotal.Text = "0.00";
+                    lblGrandTotal2.Text = "0.00";
                     lblBalance.Text = "Balance: 0.00";
                     txtCashReceived.Text = ""; ;
                     UpdateGrandTotal();

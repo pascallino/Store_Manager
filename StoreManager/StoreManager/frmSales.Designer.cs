@@ -53,6 +53,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.lstSuggestions = new System.Windows.Forms.ListBox();
+            this.lblGrandTotal2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCart)).BeginInit();
             this.SuspendLayout();
             // 
@@ -61,7 +62,7 @@
             this.btnDeleteTransaction.BackColor = System.Drawing.Color.Red;
             this.btnDeleteTransaction.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnDeleteTransaction.ForeColor = System.Drawing.Color.White;
-            this.btnDeleteTransaction.Location = new System.Drawing.Point(920, 641);
+            this.btnDeleteTransaction.Location = new System.Drawing.Point(935, 641);
             this.btnDeleteTransaction.Name = "btnDeleteTransaction";
             this.btnDeleteTransaction.Size = new System.Drawing.Size(151, 51);
             this.btnDeleteTransaction.TabIndex = 10;
@@ -95,11 +96,11 @@
             // lblGrandTotal
             // 
             this.lblGrandTotal.AutoSize = true;
-            this.lblGrandTotal.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
+            this.lblGrandTotal.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblGrandTotal.ForeColor = System.Drawing.Color.Green;
             this.lblGrandTotal.Location = new System.Drawing.Point(145, 570);
             this.lblGrandTotal.Name = "lblGrandTotal";
-            this.lblGrandTotal.Size = new System.Drawing.Size(77, 41);
+            this.lblGrandTotal.Size = new System.Drawing.Size(98, 51);
             this.lblGrandTotal.TabIndex = 3;
             this.lblGrandTotal.Text = "0.00";
             // 
@@ -108,18 +109,17 @@
             this.btnCheckout.BackColor = System.Drawing.Color.Green;
             this.btnCheckout.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnCheckout.ForeColor = System.Drawing.Color.White;
-            this.btnCheckout.Location = new System.Drawing.Point(608, 647);
+            this.btnCheckout.Location = new System.Drawing.Point(685, 647);
             this.btnCheckout.Name = "btnCheckout";
             this.btnCheckout.Size = new System.Drawing.Size(150, 45);
             this.btnCheckout.TabIndex = 8;
             this.btnCheckout.Text = "CHECKOUT";
             this.btnCheckout.UseVisualStyleBackColor = false;
-          
             // 
             // btnClearCart
             // 
             this.btnClearCart.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnClearCart.Location = new System.Drawing.Point(445, 647);
+            this.btnClearCart.Location = new System.Drawing.Point(522, 647);
             this.btnClearCart.Name = "btnClearCart";
             this.btnClearCart.Size = new System.Drawing.Size(150, 45);
             this.btnClearCart.TabIndex = 9;
@@ -137,17 +137,17 @@
             // 
             // txtCashReceived
             // 
-            this.txtCashReceived.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtCashReceived.Location = new System.Drawing.Point(145, 614);
+            this.txtCashReceived.Font = new System.Drawing.Font("Segoe UI", 16.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCashReceived.Location = new System.Drawing.Point(145, 621);
             this.txtCashReceived.Name = "txtCashReceived";
-            this.txtCashReceived.Size = new System.Drawing.Size(150, 34);
+            this.txtCashReceived.Size = new System.Drawing.Size(349, 43);
             this.txtCashReceived.TabIndex = 4;
             // 
             // labelCash
             // 
             this.labelCash.AutoSize = true;
             this.labelCash.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.labelCash.Location = new System.Drawing.Point(15, 617);
+            this.labelCash.Location = new System.Drawing.Point(15, 624);
             this.labelCash.Name = "labelCash";
             this.labelCash.Size = new System.Drawing.Size(139, 28);
             this.labelCash.TabIndex = 5;
@@ -157,7 +157,7 @@
             // 
             this.labelBalance.AutoSize = true;
             this.labelBalance.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.labelBalance.Location = new System.Drawing.Point(15, 657);
+            this.labelBalance.Location = new System.Drawing.Point(15, 664);
             this.labelBalance.Name = "labelBalance";
             this.labelBalance.Size = new System.Drawing.Size(82, 28);
             this.labelBalance.TabIndex = 6;
@@ -166,11 +166,11 @@
             // lblBalance
             // 
             this.lblBalance.AutoSize = true;
-            this.lblBalance.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBalance.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblBalance.ForeColor = System.Drawing.Color.Blue;
-            this.lblBalance.Location = new System.Drawing.Point(145, 657);
+            this.lblBalance.Location = new System.Drawing.Point(145, 664);
             this.lblBalance.Name = "lblBalance";
-            this.lblBalance.Size = new System.Drawing.Size(77, 41);
+            this.lblBalance.Size = new System.Drawing.Size(98, 51);
             this.lblBalance.TabIndex = 7;
             this.lblBalance.Text = "0.00";
             // 
@@ -198,7 +198,7 @@
             this.btnUpdateTransaction.BackColor = System.Drawing.Color.SlateBlue;
             this.btnUpdateTransaction.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
             this.btnUpdateTransaction.ForeColor = System.Drawing.Color.White;
-            this.btnUpdateTransaction.Location = new System.Drawing.Point(1078, 641);
+            this.btnUpdateTransaction.Location = new System.Drawing.Point(1093, 641);
             this.btnUpdateTransaction.Name = "btnUpdateTransaction";
             this.btnUpdateTransaction.Size = new System.Drawing.Size(150, 51);
             this.btnUpdateTransaction.TabIndex = 13;
@@ -251,9 +251,21 @@
             this.lstSuggestions.Visible = false;
             this.lstSuggestions.SelectedIndexChanged += new System.EventHandler(this.lstSuggestions_SelectedIndexChanged);
             // 
+            // lblGrandTotal2
+            // 
+            this.lblGrandTotal2.AutoSize = true;
+            this.lblGrandTotal2.Font = new System.Drawing.Font("Segoe UI", 22.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGrandTotal2.ForeColor = System.Drawing.Color.Green;
+            this.lblGrandTotal2.Location = new System.Drawing.Point(959, 73);
+            this.lblGrandTotal2.Name = "lblGrandTotal2";
+            this.lblGrandTotal2.Size = new System.Drawing.Size(98, 51);
+            this.lblGrandTotal2.TabIndex = 19;
+            this.lblGrandTotal2.Text = "0.00";
+            // 
             // frmSales
             // 
             this.ClientSize = new System.Drawing.Size(1275, 721);
+            this.Controls.Add(this.lblGrandTotal2);
             this.Controls.Add(this.lstSuggestions);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
@@ -292,5 +304,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.ListBox lstSuggestions;
+        private System.Windows.Forms.Label lblGrandTotal2;
     }
 }

@@ -105,7 +105,7 @@
             this.lblTotalItems.AutoSize = true;
             this.lblTotalItems.Font = new System.Drawing.Font("Segoe UI", 18F, System.Drawing.FontStyle.Bold);
             this.lblTotalItems.ForeColor = System.Drawing.Color.Green;
-            this.lblTotalItems.Location = new System.Drawing.Point(773, 559);
+            this.lblTotalItems.Location = new System.Drawing.Point(772, 559);
             this.lblTotalItems.Name = "lblTotalItems";
             this.lblTotalItems.Size = new System.Drawing.Size(35, 41);
             this.lblTotalItems.TabIndex = 1;

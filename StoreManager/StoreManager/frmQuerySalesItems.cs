@@ -107,7 +107,9 @@ namespace StoreManager
                                         s.Receipt_No,
                                         i.ItemName,
                                         s.Carton_Qty,
+                                        s.Carton_SP,
                                         s.Units,
+                                        s.Unit_SP,
                                         s.Total_Qty,
                                         s.Subtotal,
                                         s.Date_Sold,
@@ -133,7 +135,11 @@ namespace StoreManager
 
                     RecalculateTotal();
                     dgvSummary.DataSource = dtSummary;
-                   
+                    if (dgvSummary.Columns.Contains("SoldByID"))
+                    {
+                        dgvSummary.Columns["SoldByID"].Visible = false;
+                    }
+
                 }
             }
             catch (Exception ex)
@@ -175,7 +181,8 @@ namespace StoreManager
                                  .Cast<DataRowView>()
                                  .Sum(r => Convert.ToInt32(r["Total_Qty"]));
 
-            lblTotalItems.Text = total.ToString("N0");
+
+            lblTotalItems.Text = total.ToString();
         }
 
         private void StyleGrid()

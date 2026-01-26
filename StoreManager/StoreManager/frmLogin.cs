@@ -52,6 +52,8 @@ namespace StoreManager
                 if (dr.Read())
                 {
                     string fullName = dr["Firstname"] + " " + dr["Lastname"];
+                    Sessiion.FullName = fullName;
+
                     int Id = int.Parse(dr["UserID"].ToString());
 
                     MessageBox.Show($"Welcome {fullName}!",
